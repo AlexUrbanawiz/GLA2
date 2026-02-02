@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import Checkbox from 'expo-checkbox';
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -23,6 +24,7 @@ export default function Home() {
 
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Home Screen</Text>
+        <Checkbox value={item1} onValueChange={setItem1} />
       </View>
     </>
   );
