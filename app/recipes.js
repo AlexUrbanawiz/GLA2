@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-//This is assuming the ingredients provided is a dictionary, with the key being the ingredient name, and the value being the quantity
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Ingredient } from "../classes/ingredient";
+//This is assuming the ingredients provided is a list of ingredient objects
 class Recipe {
   constructor(name, ingredients) {
     this.name = name;
@@ -33,14 +34,14 @@ function MakeRecipe() {
 
 export default function Recipes() {
   const [isAdding, setIsAdding] = useState(false);
-  let testIngredients = {};
-  testIngredients["Onion"] = "1/2 whole";
-  testIngredients["Green bell pepper"] = "1 whole";
-  testIngredients["Heavy cream"] = "1/2 cup";
-  testIngredients["Cream cheese"] = "1 block";
-  testIngredients["Chicken broth"] = "1 cup";
-  testIngredients["Parmesan cheese"] = "1/2 cup";
-  testIngredients["Garlic"] = "2 cloves";
+  let testIngredients = [];
+  testIngredients.push(new Ingredient("Onion", "1/2", "3.00"));
+  testIngredients.push(new Ingredient("Green Bell Pepper", "1", "1.00"));
+  testIngredients.push(new Ingredient("Heavy cream", "1/2", "6.00"));
+  testIngredients.push(new Ingredient("Cream cheese", "1", "3.00"));
+  testIngredients.push(new Ingredient("Chicken broth", "1", "3.00"));
+  testIngredients.push(new Ingredient("Parmesan cheese", "1/2", "3.00"));
+  testIngredients.push(new Ingredient("Garlic", "2", "3.00"));
   const TestRecipe = new Recipe("TestRecipe", testIngredients);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -48,13 +49,11 @@ export default function Recipes() {
         {TestRecipe.get_name()}
       </Text>
 
-      {Object.entries(TestRecipe.get_ingredients()).map(
-        ([ingredient, quantity]) => (
-          <Text key={ingredient}>
-            {ingredient}: {quantity}
-          </Text>
-        ),
-      )}
+      {TestRecipe.get_ingredients().map((ing, index) => (
+        <Text key={index}>
+          {ing.get_name()}: {ing.get_quantity()} — ${ing.get_price()}
+        </Text>
+      ))}
 
       {/* 3. CONDITIONAL RENDERING: Only show input if isAdding is true */}
       {isAdding && <MakeRecipe />}
@@ -68,3 +67,23 @@ export default function Recipes() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    padding: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#eee",
+    padding: 10,
+    borderRadius: 8,
+  },
+});
