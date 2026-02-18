@@ -1,6 +1,6 @@
 // name, quantity, price
 
-export class Ingredient {
+export default class Ingredient {
   constructor(item, quantity, price) {
     this.item = item;
     this.quantity = quantity;
