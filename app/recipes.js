@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Ingredient } from "../classes/ingredient";
+import Ingredient from "../classes/ingredient";
 //This is assuming the ingredients provided is a list of ingredient objects
 class Recipe {
   constructor(name, ingredients) {
