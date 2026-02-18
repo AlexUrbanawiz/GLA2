@@ -1,22 +1,33 @@
 import Checkbox from 'expo-checkbox';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+// import { Button } from 'react-native-web';
 
 export default function Inventory() {
-  const [isChecked, setChecked] = useState(false);
+  // const [isChecked, setChecked] = useState([
+  // ]);
 
   return (
     <View style={styles.container}>
+      {/* <View style={styles.section}>
+        <Button>
+          onPress={addItem()};
+        </Button>
+      </View> */}
       <View style={styles.section}>
         <Checkbox style={styles.checkbox} value={isChecked} onValueChange={setChecked} />
         <Text style={styles.paragraph}>
-          {/* {ingredient("test", 1, 5)} */}
           test
         </Text>
       </View>
     </View>
   );
 }
+
+// const addItem = (item, quantity, price) => {
+//   item = new Ingredient(item, quantity, price);
+//   setChecked(item);
+// }
 
 const styles = StyleSheet.create({
   container: {
