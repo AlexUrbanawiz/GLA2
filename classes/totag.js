@@ -27,5 +27,3 @@ class ToTag {
     // Return all tags for this ingredient
   }
 }
-
-export default Ingredient;

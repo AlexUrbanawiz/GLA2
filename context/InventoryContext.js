@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-const FavoritesContext = createContext()
+const InventoryContext = createContext()
 const STORAGE_KEY = 'INVENTORY'
 
 export function InventoryProvider({children}) {
