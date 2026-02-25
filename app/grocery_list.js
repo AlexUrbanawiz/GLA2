@@ -1,4 +1,4 @@
-import Checkbox from 'expo-checkbox';
+// import Checkbox from 'expo-checkbox';
 // import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 // import { Button } from 'react-native-web';
@@ -15,7 +15,7 @@ export default function Inventory() {
         </Button>
       </View> */}
       <View style={styles.section}>
-        <Checkbox style={styles.checkbox} value={isChecked} onValueChange={setChecked} />
+        {/* <Checkbox style={styles.checkbox} value={isChecked} onValueChange={setChecked} /> */}
         <Text style={styles.paragraph}>
           test
         </Text>
