@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import Ingredient from "../classes/ingredient";
@@ -7,13 +6,6 @@ import { useInventory } from "../context/InventoryContext";
 
 export default function Inventory() {
   const [isAdding, setIsAdding] = useState(false);
-=======
-import { Text, View } from "react-native";
-import Ingredient from "../classes/ingredient";
-import { useInventory } from "../context/InventoryContext";
-
-export default function Inventory() {
->>>>>>> e60301bf16ed33dbfaf536714d8261377c19dc04
   const { addItem, isAdded } = useInventory();
   const ingredient = new Ingredient("Milk", 2, 4.99);
 
@@ -75,7 +67,6 @@ export default function Inventory() {
   };
 
   return (
-<<<<<<< HEAD
     <ScrollView contentContainerStyle={styles.container}>
       {locationsList.map((loc, index) => (
         <View key={index} style={styles.container}>
@@ -140,10 +131,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-=======
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Inventory</Text>
-    </View>
-  );
-}
->>>>>>> e60301bf16ed33dbfaf536714d8261377c19dc04
