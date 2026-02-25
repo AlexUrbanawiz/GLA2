@@ -61,7 +61,7 @@ export default function Home() {
             size={22}
             style={{ paddingEnd: 5 }}
           />
-          <Text>My Grocery Lists</Text>
+          <Text>Weekly Items</Text>
         </View>
       </Pressable>
       <Pressable onPress={() => router.push("/weekly")} style={{ padding: 10 }}>
