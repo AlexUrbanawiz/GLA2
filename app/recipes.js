@@ -1,7 +1,14 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-//This is assuming the ingredients provided is a dictionary, with the key being the ingredient name, and the value being the quantity
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import Ingredient from "../classes/ingredient";
+//This is assuming the ingredients provided is a list of ingredient objects
 class Recipe {
   constructor(name, ingredients) {
     this.name = name;
@@ -15,56 +22,112 @@ class Recipe {
   }
 }
 
-function MakeRecipe() {
-  const [text, setText] = useState("");
+function MakeRecipe({ onAddIngredient }) {
+  const [name, setName] = useState("");
+  const [qty, setQty] = useState("");
+  const [price, setPrice] = useState("");
+
+  const handleAdd = () => {
+    if (name && qty) {
+      // Create the new object and send it to the parent
+      const newIng = new Ingredient(name, qty, price || "0");
+      onAddIngredient(newIng);
+
+      // Clear the inputs
+      setName("");
+      setQty("");
+      setPrice("");
+    }
+  };
+
   return (
     <View style={styles.inputContainer}>
-      <Text>Enter Ingredient Name:</Text>
       <TextInput
         style={styles.input}
-        placeholder="e.g. Red Onion"
-        onChangeText={setText}
-        value={text}
+        placeholder="Ingredient Name"
+        value={name}
+        onChangeText={setName}
       />
-      <Text style={{ marginTop: 5 }}>You are typing: {text}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Quantity (e.g. 1 cup)"
+        value={qty}
+        onChangeText={setQty}
+      />
+      <Pressable style={styles.addButton} onPress={handleAdd}>
+        <Text style={{ color: "white" }}>Confirm Add</Text>
+      </Pressable>
     </View>
   );
 }
 
 export default function Recipes() {
   const [isAdding, setIsAdding] = useState(false);
-  let testIngredients = {};
-  testIngredients["Onion"] = "1/2 whole";
-  testIngredients["Green bell pepper"] = "1 whole";
-  testIngredients["Heavy cream"] = "1/2 cup";
-  testIngredients["Cream cheese"] = "1 block";
-  testIngredients["Chicken broth"] = "1 cup";
-  testIngredients["Parmesan cheese"] = "1/2 cup";
-  testIngredients["Garlic"] = "2 cloves";
-  const TestRecipe = new Recipe("TestRecipe", testIngredients);
+  const [ingredientsList, setIngredientsList] = useState([
+    new Ingredient("Onion", "1/2", "3.00"),
+    new Ingredient("Green Bell Pepper", "1", "1.00"),
+    new Ingredient("Heavy cream", "1/2", "6.00"),
+    new Ingredient("Cream cheese", "1", "3.00"),
+    new Ingredient("Chicken broth", "1", "3.00"),
+    new Ingredient("Parmesan cheese", "1/2", "3.00"),
+    new Ingredient("Garlic", "2", "3.00"),
+  ]);
+  const addIngredientToList = (newIng) => {
+    setIngredientsList([...ingredientsList, newIng]);
+    setIsAdding(false); // Close the input area after adding
+  };
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-        {TestRecipe.get_name()}
-      </Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Recipe Ingredients</Text>
 
-      {Object.entries(TestRecipe.get_ingredients()).map(
-        ([ingredient, quantity]) => (
-          <Text key={ingredient}>
-            {ingredient}: {quantity}
+      {ingredientsList.map((ing, index) => (
+        <View key={index} style={styles.listItem}>
+          <Text>
+            {ing.get_name()} - {ing.get_quantity()}
           </Text>
-        ),
-      )}
-
-      {/* 3. CONDITIONAL RENDERING: Only show input if isAdding is true */}
-      {isAdding && <MakeRecipe />}
-
-      <Pressable onPress={() => setIsAdding(!isAdding)} style={{ padding: 10 }}>
-        <View style={styles.button}>
-          <Ionicons name="albums-outline" size={22} style={{ paddingEnd: 5 }} />
-          <Text>{isAdding ? "Close" : "Add Ingredient"}</Text>
         </View>
+      ))}
+
+      {isAdding && <MakeRecipe onAddIngredient={addIngredientToList} />}
+
+      <Pressable
+        onPress={() => setIsAdding(!isAdding)}
+        style={styles.toggleButton}
+      >
+        <Text>{isAdding ? "Cancel" : "+ Add Ingredient"}</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { padding: 40, alignItems: "center" },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
+  inputContainer: {
+    width: "100%",
+    backgroundColor: "#f9f9f9",
+    padding: 15,
+    borderRadius: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  addButton: {
+    backgroundColor: "green",
+    padding: 10,
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  toggleButton: { marginTop: 20, padding: 10 },
+  listItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    width: "100%",
+  },
+});
