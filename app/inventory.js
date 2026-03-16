@@ -10,25 +10,6 @@ export default function Inventory() {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const { inventory, addIngredient, addLocation, removeIngredient } = useInventory();
 
-  const [locations1, setLocations] = useState([
-    {
-      name: "Pantry",
-      ingredients: [
-          new Ingredient("Onion", "1/2", "3.00"),
-          new Ingredient("Green Bell Pepper", "1", "1.00"),
-          new Ingredient("Chicken broth", "1", "3.00"),
-          new Ingredient("Garlic", "2", "3.00"),
-      ],
-    },
-    {
-      name: "Fridge",
-      ingredients: [
-        new Ingredient("Heavy cream", "1/2", "6.00"),
-        new Ingredient("Cream cheese", "1", "3.00"),
-        new Ingredient("Parmesan cheese", "1/2", "3.00"),
-      ],
-    },
-  ])
   const sections = inventory.map(loc => ({
     title: loc.name,
     data: loc.ingredients,
@@ -48,17 +29,6 @@ export default function Inventory() {
       if (!name || !qty || !selectedLocation) return
 
       const newIngredient = new Ingredient(name, qty, "0")
-
-      setLocations(prev =>
-        prev.map(loc =>
-          loc.name === selectedLocation
-            ? {
-                ...loc,
-                ingredients: [...loc.ingredients, newIngredient],
-              }
-            : loc
-        )
-      )
 
       addIngredient(selectedLocation, newIngredient)
 
@@ -101,13 +71,6 @@ export default function Inventory() {
     const handleAdd = () => {
       if (!newName) return
 
-      setLocations(prev => [
-        ...prev,
-        {
-          name: newName,
-          ingredients: []
-        }
-      ])
       addLocation(
         {
           name: newName,
