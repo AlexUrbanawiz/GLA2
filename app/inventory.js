@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -7,14 +8,13 @@ import { useInventory } from "../context/InventoryContext";
 export default function Inventory() {
   const [isAddingLoc, setIsAddingLoc] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState(false);
-  const { addItem, isAdded } = useInventory();
-  const ingredient = new Ingredient("Milk", 2, 4.99);
+  const { inventory, addIngredient, addLocation, removeIngredient } = useInventory();
 
-  const [locations, setLocations] = useState([
+  const [locations1, setLocations] = useState([
     {
       name: "Pantry",
       ingredients: [
-         new Ingredient("Onion", "1/2", "3.00"),
+          new Ingredient("Onion", "1/2", "3.00"),
           new Ingredient("Green Bell Pepper", "1", "1.00"),
           new Ingredient("Chicken broth", "1", "3.00"),
           new Ingredient("Garlic", "2", "3.00"),
@@ -29,7 +29,7 @@ export default function Inventory() {
       ],
     },
   ])
-  const sections = locations.map(loc => ({
+  const sections = inventory.map(loc => ({
     title: loc.name,
     data: loc.ingredients,
   }))
@@ -39,7 +39,7 @@ export default function Inventory() {
     const [qty, setQty] = useState("");
     const [open, setOpen] = useState(false)
     const [selectedLocation, setSelectedLocation] = useState(null)
-    const locationItems = locations.map(loc => ({
+    const locationItems = inventory.map(loc => ({
       label: loc.name,
       value: loc.name,
     }))
@@ -59,6 +59,8 @@ export default function Inventory() {
             : loc
         )
       )
+
+      addIngredient(selectedLocation, newIngredient)
 
       setName("")
       setQty("")
@@ -106,6 +108,12 @@ export default function Inventory() {
           ingredients: []
         }
       ])
+      addLocation(
+        {
+          name: newName,
+          ingredients: []
+        }
+      )
 
       setName("")
       onClose()
@@ -132,17 +140,22 @@ export default function Inventory() {
       <SectionList
         contentContainerStyle={styles.container}
         sections={sections}
-        keyExtractor={(item, index) => item.get_name() + index}
+        keyExtractor={(item, index) => item.name + index}
         
         renderSectionHeader={({ section }) => (
           <Text style={styles.title}>{section.title}</Text>
         )}
 
-        renderItem={({ item }) => (
+        renderItem={({ item, section }) => (
           <View style={styles.listItem}>
             <Text>
-              {item.get_name()} - {item.get_quantity()}
+              {item.name} - {item.quantity}
             </Text>
+            <Pressable
+              onPress={() => removeIngredient(section.title, item)}
+            >
+              <Ionicons name="close-outline" size={22} style={{ paddingEnd: 5 }} />
+            </Pressable>
           </View>
         )}
       />

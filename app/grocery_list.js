@@ -93,7 +93,7 @@ export default function Inventory() {
             onValueChange={() => toggleItem(index)}            
           />
           <Text style={styles.paragraph}>
-            {item.ingredient.item}
+            {item.ingredient.name}
           </Text>
           <Text style={styles.paragraph}>
             {" - "} 
