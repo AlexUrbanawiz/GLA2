@@ -41,8 +41,13 @@ export function ListProvider({ children }) {
       )
     );
   };
+  const removeList = (list_name) => {
+    setLists((prev) =>
+      prev.filter((l) => l.name !== list_name)
+    );
+  };
   const removeItem = (list_name, item) => {
-    setInventory((prev) =>
+    setLists((prev) =>
       prev.map((list) =>
         list.name === list_name
           ? {
@@ -56,18 +61,25 @@ export function ListProvider({ children }) {
     );
   }
 
-  const toggleItem = (index) => {
+  const toggleItem = (listName, index) => {
     setLists((prev) =>
-      prev.map((item, i) =>
-        i === index
-          ? { ...item, isChecked: !item.isChecked }
-          : item
+      prev.map((list) =>
+        list.name === listName
+          ? {
+              ...list,
+              items: list.items.map((item, i) =>
+                i === index
+                  ? { ...item, isChecked: !item.isChecked }
+                  : item
+              ),
+            }
+          : list
       )
     );
-  }
+  };
 
   return (
-    <ListContext.Provider value={{ lists, addList, addItem, removeItem, toggleItem }}>
+    <ListContext.Provider value={{ lists, addList, addItem, removeItem, removeList, toggleItem }}>
       {children}
     </ListContext.Provider>
   );

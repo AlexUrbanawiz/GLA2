@@ -8,7 +8,7 @@ import { useInventory } from "../context/InventoryContext";
 export default function Inventory() {
   const [isAddingLoc, setIsAddingLoc] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState(false);
-  const { inventory, addIngredient, addLocation, removeIngredient } = useInventory();
+  const { inventory, addIngredient, addLocation, removeIngredient, removeLoc } = useInventory();
 
   const sections = inventory.map(loc => ({
     title: loc.name,
@@ -105,8 +105,16 @@ export default function Inventory() {
         sections={sections}
         keyExtractor={(item, index) => item.name + index}
         
+        
         renderSectionHeader={({ section }) => (
-          <Text style={styles.title}>{section.title}</Text>
+          <View style={styles.titlescreen}>
+            <Text style={styles.title}>{section.title}</Text>
+            <Pressable
+              onPress={() => removeLoc(section.title)}            
+            >
+              <Ionicons name="close-outline" size={22} style={{ paddingEnd: 5 }} />
+            </Pressable>
+          </View>
         )}
 
         renderItem={({ item, section }) => (
@@ -144,7 +152,15 @@ export default function Inventory() {
 
 const styles = StyleSheet.create({
   container: { padding: 40, alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
+  title: { 
+    fontSize: 22, 
+    fontWeight: "bold", 
+    margin: 15,
+  },
+  titlescreen: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   inputContainer: {
     width: "100%",
     backgroundColor: "#f9f9f9",
@@ -166,6 +182,8 @@ const styles = StyleSheet.create({
   },
   toggleButton: { marginTop: 20, padding: 10 },
   listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",

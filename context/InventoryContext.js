@@ -41,6 +41,11 @@ export function InventoryProvider({ children }) {
       )
     );
   };
+  const removeLoc = (location_name) => {
+    setInventory((prev) =>
+      prev.filter((l) => l.name !== location_name)
+    );
+  };
   const removeIngredient = (locationName, item) => {
     setInventory((prev) =>
       prev.map((loc) =>
@@ -57,7 +62,7 @@ export function InventoryProvider({ children }) {
   }
 
   return (
-    <InventoryContext.Provider value={{ inventory, addLocation, addIngredient, removeIngredient }}>
+    <InventoryContext.Provider value={{ inventory, addLocation, addIngredient, removeLoc, removeIngredient }}>
       {children}
     </InventoryContext.Provider>
   );

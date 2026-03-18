@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import Checkbox from 'expo-checkbox';
 import { useState } from 'react';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import DropDownPicker from "react-native-dropdown-picker";
@@ -20,7 +21,7 @@ export default function GroceryList() {
   //const [list, setList] = useState([])
   const [isAddingList, setIsAddingList] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState(false);
-  const { lists, addList, addItem, removeItem, toggleItem } = useList();  
+  const { lists, addList, addItem, removeItem, removeList, toggleItem } = useList();  
   //#endregion
 
   const sections = lists.map(list => ({
@@ -123,16 +124,28 @@ export default function GroceryList() {
   return (
     <View style={styles.container}>
       <SectionList
-        contentContainerStyle={styles.container}
+        style={{ flex: 1 }}
         sections={sections}
         keyExtractor={(item, index) => item.ingredient.name + index}
         
         renderSectionHeader={({ section }) => (
-          <Text style={styles.title}>{section.title}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={styles.title}>{section.title}</Text>
+            <Pressable
+              onPress={() => removeList(section.title)}            
+            >
+              <Ionicons name="close-outline" size={22} style={{ paddingEnd: 5 }} />
+            </Pressable>
+          </View>
         )}
 
-        renderItem={({ item, section }) => (
+        renderItem={({ item, index, section }) => (
           <View style={styles.listItem}>
+            <Checkbox
+              style={styles.checkbox}
+              value={item.isChecked}
+              onValueChange={() => toggleItem(section.title, index)}            
+            />
             <Text>
               {item.ingredient.name} - {item.ingredient.quantity}
             </Text>
@@ -145,21 +158,19 @@ export default function GroceryList() {
         )}
       />
       
-      {isAddingList && <AddList onClose={() => setIsAddingList(false)} />}
-      {isAddingItem && <AddItem onClose={() => setIsAddingItem(false)} />}
 
-      <Pressable
-        onPress={() => setIsAddingList(!isAddingList)}
-        style={styles.toggleButton}
-      >
-        <Text>{isAddingList ? "Cancel" : "+ Add Location"}</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setIsAddingItem(!isAddingItem)}
-        style={styles.toggleButton}
-      >
-        <Text>{isAddingItem ? "Cancel" : "+ Add Item"}</Text>
-      </Pressable>
+      <View>
+        {isAddingList && <AddList onClose={() => setIsAddingList(false)} />}
+        {isAddingItem && <AddItem onClose={() => setIsAddingItem(false)} />}
+
+        <Pressable onPress={() => setIsAddingList(!isAddingList)} style={styles.toggleButton}>
+          <Text>{isAddingList ? "Cancel" : "+ Add Location"}</Text>
+        </Pressable>
+
+        <Pressable onPress={() => setIsAddingItem(!isAddingItem)} style={styles.toggleButton}>
+          <Text>{isAddingItem ? "Cancel" : "+ Add Item"}</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -178,6 +189,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
   },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -202,5 +214,13 @@ const styles = StyleSheet.create({
   toggleButton: { marginTop: 20, padding: 10 },
   checkbox: {
     margin: 8,
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    width: "100%",
   },
 });
