@@ -15,12 +15,6 @@ class Recipe {
     this.name = name;
     this.ingredients = ingredients;
   }
-  get_name() {
-    return this.name;
-  }
-  get_ingredients() {
-    return this.ingredients;
-  }
 }
 
 function MakeRecipe({ onAddIngredient }) {

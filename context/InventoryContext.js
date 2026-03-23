@@ -29,16 +29,40 @@ export function InventoryProvider({ children }) {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
   }, [inventory, loaded]);
 
-  const addItem = (item) => {
+  const addLocation = (location) => {
+    setInventory((prev) => [...prev, location]);
+  };
+  const addIngredient = (locationName, ingredient) => {
     setInventory((prev) =>
-      prev.includes(item) ? prev.filter((m) => m !== item) : [...prev, item],
+      prev.map((loc) =>
+        loc.name === locationName
+          ? { ...loc, ingredients: [...loc.ingredients, ingredient] }
+          : loc
+      )
     );
   };
-
-  const isAdded = (item) => inventory.includes(item);
+  const removeLoc = (location_name) => {
+    setInventory((prev) =>
+      prev.filter((l) => l.name !== location_name)
+    );
+  };
+  const removeIngredient = (locationName, item) => {
+    setInventory((prev) =>
+      prev.map((loc) =>
+        loc.name === locationName
+          ? {
+              ...loc,
+              ingredients: loc.ingredients.filter(
+                (ing) => ing.name !== item.name
+              ),
+            }
+          : loc
+      )
+    );
+  }
 
   return (
-    <InventoryContext.Provider value={{ inventory, addItem, isAdded }}>
+    <InventoryContext.Provider value={{ inventory, addLocation, addIngredient, removeLoc, removeIngredient }}>
       {children}
     </InventoryContext.Provider>
   );
