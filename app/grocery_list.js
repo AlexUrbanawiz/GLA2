@@ -204,6 +204,13 @@ export default function GroceryList() {
           value={tagName}
           onChangeText={setTag}
         />
+        <TextInput
+          style={styles.input}
+          placeholder="Estimated Price (e.g. 4.99)"
+          value={price}
+          onChangeText={setPrice}
+          keyboardType="numeric"
+        />
         <Pressable style={styles.addButton} onPress={handleAdd}>
           <Text style={{ color: "white" }}>Add</Text>
         </Pressable>
@@ -279,7 +286,8 @@ export default function GroceryList() {
               onValueChange={() => toggleItem(section.title, index)}
             />
             <Text>
-              {item.ingredient.name} - {item.ingredient.quantity}
+              {item.ingredient.name} - {item.ingredient.quantity} ($
+              {item.ingredient.price})
             </Text>
             <Pressable onPress={() => removeItem(section.title, item)}>
               <Ionicons

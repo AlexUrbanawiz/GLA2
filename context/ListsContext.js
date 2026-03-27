@@ -47,19 +47,26 @@ export function ListProvider({ children }) {
     );
   };
   const removeItem = (list_name, item) => {
+    console.log("Clicked item:", item);
+
     setLists((prev) =>
-      prev.map((list) =>
-        list.name === list_name
+      prev.map((list) => {
+        if (list.name === list_name) {
+          console.log("Items in this list:", list.items);
+        }
+
+        return list.name === list_name
           ? {
               ...list,
-              items: list.items.filter(
-                (ing) => ing.name !== item.name
-              ),
+              items: list.items.filter((ing) => {
+                console.log("Comparing:", ing, "to", item);
+                return ing.ingredient.name !== item.ingredient.name;
+              }),
             }
-          : list
-      )
+          : list;
+      })
     );
-  }
+  };
 
   const toggleItem = (listName, index) => {
     setLists((prev) =>

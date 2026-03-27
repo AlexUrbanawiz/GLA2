@@ -28,19 +28,19 @@ const styles = StyleSheet.create({
 // Calculator basic functions
 // adding function
 
-function Add(numOne, numTwo) {
+export function Add(numOne, numTwo) {
   const addTotal = numOne + numTwo;
   return addTotal;
 }
 
 // multiplier function
-function Multiplier(multiple, baseNumber) {
-  const multiplierTotalTotal = multiple * baseNumber;
+export function Multiplier(multiple, baseNumber) {
+  const multiplierTotal = multiple * baseNumber;
   return multiplierTotal;
 }
 
 // subtration function
-function subtractNum(numOne, numTwo) {
+export function subtractNum(numOne, numTwo) {
   const subtractTotal = numOne - numTwo;
   return subtractTotal;
 }
