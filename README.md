@@ -13,7 +13,6 @@ Alex Urbanawiz
 
 An app to help college students plan their grocery runs. It allows users to create and save recipes with ingredient lists, make checklists for different stores and types of items, and keep track of ingredients that they have at home.
 
-
 ## Architecture
 
 Javascript <br>
@@ -32,6 +31,7 @@ Expo
 - [ ] Suggested items based on frequent purchases
 - [ ] Repeated lists (ex. always have milk every week)
 - [ ] List in notifications/keep screen on
+- [x] Track already-owned groceries
 - [x] Separate categories for stores
 - [x] Grocery price calculator
 - [ ] Scan barcode on products (potentially)
@@ -45,13 +45,22 @@ Text group chat
 
 ## Team Responsibility
 
-|Responsibility                      |Team Member(s)              |
+|Responsibility |Team Member(s) |
 |------------------------------------|----------------------------|
-|Conducting Meetings                 |Sam Bourgeous|
-|Maintaining Team Assignment List    |Delano Stewart Jr|
-|Ensuring GitHub is Working          |Alex Urbanawiz|
-|Maintaining Documentation           |Brita McNabb|
-|Create & Display Presentations      |Kryton Bess|
-|Submit Team Assignments             |Nathan McDowell|
+|Conducting Meetings |Sam Bourgeous|
+|Maintaining Team Assignment List |Delano Stewart Jr|
+|Ensuring GitHub is Working |Alex Urbanawiz|
+|Maintaining Documentation |Brita McNabb|
+|Create & Display Presentations |Kryton Bess|
+|Submit Team Assignments |Nathan McDowell|
 
 ## Reflections
+
+Things that went well: <br>
+- 
+- 
+- 
+Things that did not go well: <br>
+- 
+- 
+- 
