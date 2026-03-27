@@ -1,50 +1,57 @@
-# Welcome to your Expo app 👋
+# GLA (Grocery List App)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Team Members
 
-## Get started
+Kryton Bess <br>
+Samuel Bourgeous <br>
+Nathan McDowell <br>
+Brita McNabb <br>
+Delano Stewart Jr <br>
+Alex Urbanawiz
 
-1. Install dependencies
+## Software Description
 
-   ```bash
-   npm install
-   ```
+An app to help college students plan their grocery runs. It allows users to create and save recipes with ingredient lists, make checklists for different stores and types of items, and keep track of ingredients that they have at home.
 
-2. Start the app
 
-   ```bash
-   npx expo start
-   ```
+## Architecture
 
-In the output, you'll find options to open the app in a
+Javascript <br>
+React Native <br>
+JSON data storage <br>
+Github <br>
+Visual Studio Code <br>
+Expo
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Software Features
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- [x] Add items to a list and check them off
+- [ ] Save recipes: clicking them adds ingredients to the grocery order
+- [x] Tag system for ingredients, group them together in the list
+- [ ] Notifications for forgotten items
+- [ ] Suggested items based on frequent purchases
+- [ ] Repeated lists (ex. always have milk every week)
+- [ ] List in notifications/keep screen on
+- [x] Separate categories for stores
+- [x] Grocery price calculator
+- [ ] Scan barcode on products (potentially)
+- [x] Tab for recipe management
+- [x] Tab for grocery list
+- [ ] Webpage version (stretch)
 
-## Get a fresh project
+## Team Communication
 
-When you're ready, run:
+Text group chat
 
-```bash
-npm run reset-project
-```
+## Team Responsibility
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+|Responsibility                      |Team Member(s)              |
+|------------------------------------|----------------------------|
+|Conducting Meetings                 |Sam Bourgeous|
+|Maintaining Team Assignment List    |Delano Stewart Jr|
+|Ensuring GitHub is Working          |Alex Urbanawiz|
+|Maintaining Documentation           |Brita McNabb|
+|Create & Display Presentations      |Kryton Bess|
+|Submit Team Assignments             |Nathan McDowell|
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Reflections
