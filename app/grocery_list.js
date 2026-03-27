@@ -46,6 +46,11 @@ export default function GroceryList() {
     useList();
   //#endregion
 
+  // ==== [START SAM TAG FILTER] ====
+  const [filterTag, setFilterTag] = useState(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  // ==== [END SAM TAG FILTER] ====
+
   // ===================== [START SAM TAG ATTACHMENT] =====================
   lists.forEach((list) => {
     (list.items || []).forEach((item) => {
@@ -86,6 +91,19 @@ export default function GroceryList() {
     });
   });
   // ===================== [END SAM TAG GROUPING] =====================
+
+  // ===================== [START SAM TAG FILTER] =====================
+  const filteredSections = (taggedSections.length ? taggedSections : sections)
+    .map((section) => {
+      if (!filterTag) return section;
+
+      return {
+        ...section,
+        data: section.data.filter((item) => item.tags?.name === filterTag),
+      };
+    })
+    .filter((section) => section.data.length > 0);
+  // ===================== [END SAM TAG FILTER] =====================
 
   function AddList({ onClose }) {
     const [name, setName] = useState("");
@@ -196,9 +214,50 @@ export default function GroceryList() {
   // Page
   return (
     <View style={styles.container}>
+      {/* ===================== [START SAM TAG FILTER VIEW] ===================== */}
+      {filterTag && (
+        <View style={{ backgroundColor: "#fff", padding: 10 }}>
+          <Text style={{ fontWeight: "bold" }}>Filtered by: {filterTag}</Text>
+
+          {lists.map((list) =>
+            (list.items || [])
+              .filter((item) => {
+                const tag = item.tags;
+                return typeof tag === "string"
+                  ? tag === filterTag
+                  : tag?.name === filterTag;
+              })
+              .map((item, index) => (
+                <Text key={index}>
+                  {item.ingredient.name} - {item.ingredient.quantity}
+                </Text>
+              )),
+          )}
+        </View>
+      )}
+      {/* ===================== [END SAM TAG FILTER VIEW] ===================== */}
+      {/* ===================== [START SAM TAG FILTER UI] ===================== */}
+      <DropDownPicker
+        open={filterOpen}
+        value={filterTag}
+        items={[
+          { label: "All Tags", value: null },
+          ...globalTags.map((tag) => ({
+            label: tag.name,
+            value: tag.name,
+          })),
+        ]}
+        setOpen={setFilterOpen}
+        setValue={setFilterTag}
+        placeholder="Filter by tag"
+      />
+      {/* ===================== [END SAM TAG FILTER UI] ===================== */}
+
       <SectionList
         style={{ flex: 1 }}
+        // asked to change
         sections={sections}
+        // sections={filteredSections}
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
