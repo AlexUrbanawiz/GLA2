@@ -1,5 +1,5 @@
 class ToTag {
-  constructor(name, tags = []) {
+  constructor(name, tags = [], priority = 0) {
     this.id = null;
     this.name = name;
     this.tags = tags;
@@ -12,11 +12,11 @@ class ToTag {
     }
     // If tag does not already exist add to list
     this.tags.push(tag);
-    return true; // Adds ToTag
+    return true; // Successfully added tag
   }
 
   removeTag(tag) {
-    // Remove a tag from the ingredient
+    // Remove a tag from the item
     const index = this.tags.indexOf(tag);
     if (index !== -1) {
       this.tags.splice(index, 1);
@@ -26,12 +26,12 @@ class ToTag {
   }
 
   hasTag(tag) {
-    // Check if ingredient has a specific tag
+    // Check if item has a specific tag
     return this.tags.includes(tag);
   }
 
   getTags() {
-    // Return all tags for this ingredient
+    // Return all tags for this item
     return this.tags;
   }
 }
