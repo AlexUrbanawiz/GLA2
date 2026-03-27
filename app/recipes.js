@@ -74,8 +74,8 @@ export default function Recipes() {
   };
 
   const startEditing = (recipe) => {
-    setRecipeName(recipe.name);
-    setIngredientsList(recipe.ingredients);
+    setRecipeName(recipe.get_name());
+    setIngredientsList(recipe.get_ingredients());
     setEditingRecipeId(recipe.id); // Mark which one we are editing
     setIsAdding(true);
   };
@@ -130,8 +130,8 @@ export default function Recipes() {
               style={styles.recipeCard}
               onPress={() => startEditing(recipe)}
             >
-              <Text style={styles.recipeTitle}>{recipe.name}</Text>
-              <Text>{recipe.ingredients.length} Ingredients</Text>
+              <Text style={styles.recipeTitle}>{recipe.get_name()}</Text>
+              <Text>{recipe.get_ingredients().length} Ingredients</Text>
               <Pressable onPress={() => deleteRecipe(recipe.id)}>
                 <Text style={{ color: "red" }}>Remove</Text>
               </Pressable>
@@ -160,7 +160,7 @@ export default function Recipes() {
           {ingredientsList.map((ing, index) => (
             <View key={index} style={styles.listItemRow}>
               <Text>
-                {ing.name} ({ing.quantity})
+                {ing.get_name()} ({ing.get_quantity()})
               </Text>
               <Pressable onPress={() => deleteIngredient(index)}>
                 <Text style={{ color: "red" }}>Remove</Text>
