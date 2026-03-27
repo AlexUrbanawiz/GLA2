@@ -13,7 +13,22 @@ import DropDownPicker from "react-native-dropdown-picker";
 import Ingredient from "../classes/ingredient";
 import ToTag from "../classes/totag";
 import { useList } from "../context/ListsContext";
-import { Add, Multiplier } from "./components/MyText";
+
+// ===================== [START SAM TAG SYSTEM] =====================
+const globalTags = [];
+
+function getOrCreateTag(name) {
+  let tag = globalTags.find((t) => t.name === name);
+
+  if (!tag) {
+    tag = new ToTag(name, [], 0);
+    globalTags.push(tag);
+  }
+
+  return tag;
+}
+// ===================== [END SAM TAG SYSTEM] =====================
+
 class ListItem {
   constructor(ingredient, tags) {
     this.tags = tags;
@@ -31,27 +46,64 @@ export default function GroceryList() {
     useList();
   //#endregion
 
+  // ==== [START SAM TAG FILTER] ====
+  const [filterTag, setFilterTag] = useState(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  // ==== [END SAM TAG FILTER] ====
+
+  // ===================== [START SAM TAG ATTACHMENT] =====================
+  lists.forEach((list) => {
+    (list.items || []).forEach((item) => {
+      // If tags is still a string, upgrade it
+      if (typeof item.tags === "string") {
+        item.tags = getOrCreateTag(item.tags, list.name);
+      }
+    });
+  });
+  // ===================== [END SAM TAG ATTACHMENT] =====================
+
   const sections = lists.map((list) => ({
     title: list.name,
     data: list.items || [],
   }));
 
-  const totalEstimatedPrice = () => {
-    let grandTotal = 0;
+  // ===================== [START SAM TAG GROUPING] =====================
+  const taggedSections = [];
 
-    lists.forEach((list) => {
-      if (list.items) {
-        list.items.forEach((item) => {
-          const itemPrice = parseFloat(item.ingredient.price) || 0;
-          const itemQty = parseFloat(item.ingredient.quantity) || 1;
-          const itemTotal = Multiplier(itemQty, itemPrice);
-          grandTotal = Add(grandTotal, itemTotal);
-        });
+  lists.forEach((list) => {
+    const grouped = {};
+
+    (list.items || []).forEach((item) => {
+      const tagName = item.tags?.name || "Other";
+
+      if (!grouped[tagName]) {
+        grouped[tagName] = [];
       }
+
+      grouped[tagName].push(item);
     });
 
-    return grandTotal.toFixed(2);
-  };
+    Object.keys(grouped).forEach((tag) => {
+      taggedSections.push({
+        title: `${list.name} - ${tag}`,
+        data: grouped[tag],
+      });
+    });
+  });
+  // ===================== [END SAM TAG GROUPING] =====================
+
+  // ===================== [START SAM TAG FILTER] =====================
+  const filteredSections = (taggedSections.length ? taggedSections : sections)
+    .map((section) => {
+      if (!filterTag) return section;
+
+      return {
+        ...section,
+        data: section.data.filter((item) => item.tags?.name === filterTag),
+      };
+    })
+    .filter((section) => section.data.length > 0);
+  // ===================== [END SAM TAG FILTER] =====================
 
   function AddList({ onClose }) {
     const [name, setName] = useState("");
@@ -89,8 +141,10 @@ export default function GroceryList() {
     const [qty, setQty] = useState("");
     const [tagName, setTag] = useState("");
     const [open, setOpen] = useState(false);
+    // ==== [START FOR SAM TAG DROPDOWN] ====
+    const [tagOpen, setTagOpen] = useState(false);
+    // ==== [END FOR SAM TAG DROPDOWN] ====
     const [selectedList, setSelectedList] = useState(null);
-    const [price, setPrice] = useState("");
     const locationItems = lists.map((list) => ({
       label: list.name,
       value: list.name,
@@ -100,17 +154,13 @@ export default function GroceryList() {
       if (!name || !qty || !selectedList) return;
 
       const tag = new ToTag(tagName);
-      const newItem = new ListItem(
-        new Ingredient(name, qty, price || "0"),
-        tagName,
-      );
+      const newItem = new ListItem(new Ingredient(name, qty, "0"), tagName);
 
       addItem(selectedList, newItem);
 
       //setList([...list, newItem]);
       setName("");
       setQty("");
-      setPrice("");
       onClose();
     };
 
@@ -135,6 +185,19 @@ export default function GroceryList() {
           value={qty}
           onChangeText={setQty}
         />
+        {/* ===================== [START SAM TAG DROPDOWN] ===================== */}
+        <DropDownPicker
+          open={tagOpen}
+          value={tagName}
+          items={globalTags.map((tag) => ({
+            label: tag.name,
+            value: tag.name,
+          }))}
+          setOpen={setTagOpen}
+          setValue={setTag}
+          placeholder="Select a tag"
+        />
+        {/* ===================== [END SAM TAG DROPDOWN] ===================== */}
         <TextInput
           style={styles.input}
           placeholder="Tag"
@@ -158,9 +221,50 @@ export default function GroceryList() {
   // Page
   return (
     <View style={styles.container}>
+      {/* ===================== [START SAM TAG FILTER VIEW] ===================== */}
+      {filterTag && (
+        <View style={{ backgroundColor: "#fff", padding: 10 }}>
+          <Text style={{ fontWeight: "bold" }}>Filtered by: {filterTag}</Text>
+
+          {lists.map((list) =>
+            (list.items || [])
+              .filter((item) => {
+                const tag = item.tags;
+                return typeof tag === "string"
+                  ? tag === filterTag
+                  : tag?.name === filterTag;
+              })
+              .map((item, index) => (
+                <Text key={index}>
+                  {item.ingredient.name} - {item.ingredient.quantity}
+                </Text>
+              )),
+          )}
+        </View>
+      )}
+      {/* ===================== [END SAM TAG FILTER VIEW] ===================== */}
+      {/* ===================== [START SAM TAG FILTER UI] ===================== */}
+      <DropDownPicker
+        open={filterOpen}
+        value={filterTag}
+        items={[
+          { label: "All Tags", value: null },
+          ...globalTags.map((tag) => ({
+            label: tag.name,
+            value: tag.name,
+          })),
+        ]}
+        setOpen={setFilterOpen}
+        setValue={setFilterTag}
+        placeholder="Filter by tag"
+      />
+      {/* ===================== [END SAM TAG FILTER UI] ===================== */}
+
       <SectionList
         style={{ flex: 1 }}
+        // asked to change
         sections={sections}
+        // sections={filteredSections}
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
@@ -195,11 +299,7 @@ export default function GroceryList() {
           </View>
         )}
       />
-      <View style={styles.totalContainer}>
-        <Text style={styles.totalText}>
-          Total Estimate: ${totalEstimatedPrice()}
-        </Text>
-      </View>
+
       <View>
         {isAddingList && <AddList onClose={() => setIsAddingList(false)} />}
         {isAddingItem && <AddItem onClose={() => setIsAddingItem(false)} />}
@@ -268,18 +368,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     width: "100%",
-  },
-  totalContainer: {
-    paddingVertical: 15,
-    borderTopWidth: 2,
-    borderColor: "#ddd",
-    marginTop: 10,
-    marginBottom: 10,
-    alignItems: "center",
-  },
-  totalText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "green",
   },
 });
