@@ -494,7 +494,7 @@ export default function Recipes() {
           {ingredientsList.map((ing, index) => (
             <View key={index} style={styles.listItemRow}>
               <Text>
-                {ing.get_name()} ({ing.get_quantity()})
+                {ing.name} ({ing.quantity})
               </Text>
               <Pressable onPress={() => deleteIngredient(index)}>
                 <Text style={{ color: "red" }}>Remove</Text>

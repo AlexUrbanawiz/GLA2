@@ -13,24 +13,13 @@ import DropDownPicker from "react-native-dropdown-picker";
 import Ingredient from "../classes/ingredient";
 import ToTag from "../classes/totag";
 import { useList } from "../context/ListsContext";
+import { useTags } from "../context/TagsContext";
 
 // ===================== [START SAM TAG SYSTEM] =====================
 // Array that stores all unique tags
 const globalTags = [];
 
-// Functions that finds an existing tag or creates a new one
-function getOrCreateTag(name) {
-  // Try to find a tag with the same name
-  let tag = globalTags.find((t) => t.name === name);
 
-  // Creates and stores new tag
-  if (!tag) {
-    tag = new ToTag(name, [], 0);
-    globalTags.push(tag);
-  }
-
-  return tag;
-}
 // ===================== [END SAM TAG SYSTEM] =====================
 
 class ListItem {
@@ -48,8 +37,22 @@ export default function GroceryList() {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const { lists, addList, addItem, removeItem, removeList, toggleItem } =
     useList();
-  //#endregion
+  const { tags, addTag } = useTags(); // Kryton Add
 
+  //#endregion
+ // ============ Kryton Change ==================
+  function getOrCreateTag(name) {
+    if (!name) return null;
+
+    const existing = (tags || []).find((t) => t.name === name);
+    if (existing) return existing;
+
+    const newTag = new ToTag(name, [], 0);
+    addTag(newTag);
+
+    return newTag;
+  }
+// =============== End Kryton Change ==============
   // ==== [START SAM TAG FILTER] ====
   // Current tag filter
   const [filterTag, setFilterTag] = useState(null);
@@ -58,17 +61,16 @@ export default function GroceryList() {
   const [filterOpen, setFilterOpen] = useState(false);
   // ==== [END SAM TAG FILTER] ====
 
-  // ===================== [START SAM TAG ATTACHMENT] =====================
-  // Make sure all item tags are proper objects (not strings)
-  lists.forEach((list) => {
-    (list.items || []).forEach((item) => {
-      // Convert string tags into Tag objects
-      if (typeof item.tags === "string") {
-        item.tags = getOrCreateTag(item.tags, list.name);
-      }
-    });
-  });
-  // ===================== [END SAM TAG ATTACHMENT] =====================
+  // ===================== [START SAM TAG ATTACHMENT (Kryton Commented)] =====================
+  // lists.forEach((list) => {
+  //   (list.items || []).forEach((item) => {
+  //     // If tags is still a string, upgrade it
+  //     if (typeof item.tags === "string") {
+  //       item.tags = getOrCreateTag(item.tags, list.name);
+  //     }
+  //   });
+  // });
+  // ===================== [END SAM TAG ATTACHMENT (Kryton Commented)] =====================
 
   const sections = lists.map((list) => ({
     title: list.name,
@@ -94,14 +96,15 @@ export default function GroceryList() {
       // Add the item to the correct tag group
       grouped[tagName].push(item);
     });
-
-    // Convert grouped object into SectionList-compatible format
+// ============== Kryton Change ==============
     Object.keys(grouped).forEach((tag) => {
       taggedSections.push({
-        title: `${list.name} - ${tag}`, // Section title includes list name + tag
-        data: grouped[tag], // Items under that tag
+        title: list.name,
+        tag: tag,
+        data: grouped[tag],
       });
     });
+    // ============== End KC  ================
   });
   // ===================== [END SAM TAG GROUPING] =====================
 
@@ -156,6 +159,7 @@ export default function GroceryList() {
   function AddItem({ onClose }) {
     const [name, setName] = useState("");
     const [qty, setQty] = useState("");
+    const [price, setPrice] = useState(0.0);
     const [tagName, setTag] = useState("");
     const [open, setOpen] = useState(false);
     // ==== [START FOR SAM TAG DROPDOWN] ====
@@ -169,16 +173,23 @@ export default function GroceryList() {
     }));
 
     const handleAdd = () => {
-      if (!name || !qty || !selectedList) return;
+      if (!name || !qty || !price || !selectedList) return;
+// ============= Kryton Change ===========
+      const tag = getOrCreateTag(tagName);
 
-      const tag = new ToTag(tagName);
-      const newItem = new ListItem(new Ingredient(name, qty, "0"), tagName);
+      const newItem = new ListItem(
+        new Ingredient(name, qty, parseFloat(price)),
+        tag // ✅ object
+      );
+// ============== End KC =============
 
       addItem(selectedList, newItem);
 
       //setList([...list, newItem]);
       setName("");
       setQty("");
+      setPrice("");
+      setTag(""); //Kryton Add
       onClose();
     };
 
@@ -189,7 +200,7 @@ export default function GroceryList() {
           value={selectedList}
           items={locationItems}
           setOpen={setOpen}
-          setValue={setSelectedList}
+          setValue={(callback) => setSelectedList(callback())} // Kryton Change
         />
         <TextInput
           style={styles.input}
@@ -208,12 +219,12 @@ export default function GroceryList() {
         <DropDownPicker
           open={tagOpen}
           value={tagName}
-          items={globalTags.map((tag) => ({
-            label: tag.name, // What the user sees
-            value: tag.name, // Stored value
+          items={(tags || []).map((tag) => ({ // Kryton Change
+            label: tag.name,
+            value: tag.name,
           }))}
           setOpen={setTagOpen}
-          setValue={setTag}
+          setValue={(callback) => setTag(callback())} // Kryton Change
           placeholder="Select a tag"
         />
         {/* ===================== [END SAM TAG DROPDOWN] ===================== */}
@@ -271,8 +282,8 @@ export default function GroceryList() {
         open={filterOpen}
         value={filterTag}
         items={[
-          { label: "All Tags", value: null }, // Option to clear filter
-          ...globalTags.map((tag) => ({
+          { label: "All Tags", value: null },
+          ...(tags || []).map((tag) => ({ // Kryton Change
             label: tag.name,
             value: tag.name,
           })),
@@ -286,8 +297,8 @@ export default function GroceryList() {
       <SectionList
         style={{ flex: 1 }}
         // asked to change
-        sections={sections}
-        // sections={filteredSections}
+        // sections={sections}
+        sections={filteredSections} 
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
