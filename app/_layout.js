@@ -121,12 +121,9 @@ function HeaderButton() {
   const router = useRouter();
 
   return (
-    <Pressable
-      onPress={() => router.push("/settings")}
-      style={{ paddingHorizontal: 12 }}
-    >
-      <Ionicons name="settings-outline" size={22} />
-    </Pressable>
+  <Pressable onPress={() => router.push('/settings')} style={{ paddingHorizontal: 12 }}>
+  <Ionicons name="settings-outline" size={22} />
+  </Pressable>
   );
 }
 
