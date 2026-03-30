@@ -1,31 +1,37 @@
 // app/_layout.js
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 // import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 import { InventoryProvider } from '../context/InventoryContext';
 import { ListProvider } from "../context/ListsContext";
+//Added for recipe saving
+import { RecipesProvider } from "../context/RecipeContext";
 
 export default function Layout() {
-return (
-  <ListProvider>
-    <InventoryProvider>
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            title: 'GLA',
-            headerRight: () => <HeaderButton />,
-          }}
-        />
-        <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-        <Stack.Screen name="inventory" options={{ title: 'Inventory' }} />
-        <Stack.Screen name="grocery_list" options={{ title: 'Grocery List' }} />
-        <Stack.Screen name="budget" options={{ title: 'Budget' }} />
-        <Stack.Screen name="recipes" options={{ title: 'Recipes' }} />
-      </Stack>
-    {/* <Tabs
+  return (
+    <ListProvider>
+      <InventoryProvider>
+        <RecipesProvider>
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{
+                title: "GLA",
+                headerRight: () => <HeaderButton />,
+              }}
+            />
+            <Stack.Screen name="settings" options={{ title: "Settings" }} />
+            <Stack.Screen name="inventory" options={{ title: "Inventory" }} />
+            <Stack.Screen
+              name="grocery_list"
+              options={{ title: "Grocery List" }}
+            />
+            <Stack.Screen name="budget" options={{ title: "Budget" }} />
+            <Stack.Screen name="recipes" options={{ title: "Recipes" }} />
+          </Stack>
+          {/* <Tabs
     screenOptions={{
     // Global Header Styling
     headerStyle: {
@@ -101,13 +107,14 @@ return (
     tabBarIcon: ({ color }) => <Ionicons name="pie-chart-outline" size={24} color={color} />,
     }}
     /> */}
-    {/* Hiding pages that shouldn't show in the bottom bar */}
-    {/* <Tabs.Screen name="settings" options={{ href: null }} />
+          {/* Hiding pages that shouldn't show in the bottom bar */}
+          {/* <Tabs.Screen name="settings" options={{ href: null }} />
     <Tabs.Screen name="weekly" options={{ href: null }} />
     </Tabs> */}
-    </InventoryProvider>
-  </ListProvider>
-);
+        </RecipesProvider>
+      </InventoryProvider>
+    </ListProvider>
+  );
 }
 
 function HeaderButton() {
@@ -122,12 +129,12 @@ function HeaderButton() {
 
 // styling or css stuff
 const styles = StyleSheet.create({
-logoText: {
-fontSize: 20,
-fontWeight: '800',
-color: '#333',
-marginLeft: 5,
-letterSpacing: 1,
-},
+  logoText: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#333",
+    marginLeft: 5,
+    letterSpacing: 1,
+  },
 });
 // styling or css stuff
