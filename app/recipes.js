@@ -344,7 +344,7 @@ export default function Recipes() {
   const [ingredientsList, setIngredientsList] = useState([]);
   const [editingRecipeId, setEditingRecipeId] = useState(null);
 
-  const { inventory } = useInventory();
+  const { inventory, consumeCoveredForRecipe } = useInventory();
   const { lists, addItem } = useList();
 
   const addIngredientToList = (newIng) => {
@@ -410,6 +410,9 @@ export default function Recipes() {
         listName,
         addItem,
       );
+
+      // Fix 2 (B): consume only what inventory covered (not the missing part).
+      consumeCoveredForRecipe(recipe);
 
       const parts = [];
       if (added.length) {
