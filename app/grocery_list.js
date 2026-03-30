@@ -297,8 +297,8 @@ export default function GroceryList() {
       <SectionList
         style={{ flex: 1 }}
         // asked to change
-        // sections={sections}
-        sections={filteredSections} 
+        sections={sections}
+        // sections={filteredSections} 
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
