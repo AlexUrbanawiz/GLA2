@@ -1,10 +1,10 @@
 // app/_layout.js
 import { Stack } from "expo-router";
 // import { Tabs } from 'expo-router';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { Pressable, StyleSheet } from "react-native";
-import { InventoryProvider } from "../context/InventoryContext";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Pressable, StyleSheet } from 'react-native';
+import { InventoryProvider } from '../context/InventoryContext';
 import { ListProvider } from "../context/ListsContext";
 //Added for recipe saving
 import { RecipesProvider } from "../context/RecipeContext";
