@@ -16,6 +16,7 @@ import { useList } from "../context/ListsContext";
 import { useTags } from "../context/TagsContext";
 
 // ===================== [START SAM TAG SYSTEM] =====================
+// Array that stores all unique tags
 const globalTags = [];
 
 
@@ -53,7 +54,10 @@ export default function GroceryList() {
   }
 // =============== End Kryton Change ==============
   // ==== [START SAM TAG FILTER] ====
+  // Current tag filter
   const [filterTag, setFilterTag] = useState(null);
+
+  // Controls whether the filter dropdown is open
   const [filterOpen, setFilterOpen] = useState(false);
   // ==== [END SAM TAG FILTER] ====
 
@@ -74,18 +78,22 @@ export default function GroceryList() {
   }));
 
   // ===================== [START SAM TAG GROUPING] =====================
+  // Items are grouped by their tags
   const taggedSections = [];
 
   lists.forEach((list) => {
     const grouped = {};
 
     (list.items || []).forEach((item) => {
+      // Get the tag name, default to "Other" if none exists
       const tagName = item.tags?.name || "Other";
 
+      // Initialize the group if it doesn't exist yet
       if (!grouped[tagName]) {
         grouped[tagName] = [];
       }
 
+      // Add the item to the correct tag group
       grouped[tagName].push(item);
     });
 // ============== Kryton Change ==============
@@ -101,15 +109,19 @@ export default function GroceryList() {
   // ===================== [END SAM TAG GROUPING] =====================
 
   // ===================== [START SAM TAG FILTER] =====================
+  // Apply filtering
   const filteredSections = (taggedSections.length ? taggedSections : sections)
     .map((section) => {
+      // If no filter is selected, return the section as-is
       if (!filterTag) return section;
 
+      // Otherwise, filter items to only those matching the selected tag
       return {
         ...section,
         data: section.data.filter((item) => item.tags?.name === filterTag),
       };
     })
+    // Remove any sections that end up empty after filtering
     .filter((section) => section.data.length > 0);
   // ===================== [END SAM TAG FILTER] =====================
 
@@ -151,6 +163,7 @@ export default function GroceryList() {
     const [tagName, setTag] = useState("");
     const [open, setOpen] = useState(false);
     // ==== [START FOR SAM TAG DROPDOWN] ====
+    // Controls whether the tag selection dropdown is open
     const [tagOpen, setTagOpen] = useState(false);
     // ==== [END FOR SAM TAG DROPDOWN] ====
     const [selectedList, setSelectedList] = useState(null);
@@ -202,6 +215,7 @@ export default function GroceryList() {
           onChangeText={setQty}
         />
         {/* ===================== [START SAM TAG DROPDOWN] ===================== */}
+        {/* Dropdown that lets the user select from existing tags */}
         <DropDownPicker
           open={tagOpen}
           value={tagName}
@@ -238,6 +252,7 @@ export default function GroceryList() {
   return (
     <View style={styles.container}>
       {/* ===================== [START SAM TAG FILTER VIEW] ===================== */}
+      {/* Displays a preview of items that match the selected filter tag */}
       {filterTag && (
         <View style={{ backgroundColor: "#fff", padding: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Filtered by: {filterTag}</Text>
@@ -246,6 +261,8 @@ export default function GroceryList() {
             (list.items || [])
               .filter((item) => {
                 const tag = item.tags;
+
+                // Handle both string and object tag formats
                 return typeof tag === "string"
                   ? tag === filterTag
                   : tag?.name === filterTag;
@@ -260,6 +277,7 @@ export default function GroceryList() {
       )}
       {/* ===================== [END SAM TAG FILTER VIEW] ===================== */}
       {/* ===================== [START SAM TAG FILTER UI] ===================== */}
+      {/* Dropdown that allows the user to select a tag to filter by */}
       <DropDownPicker
         open={filterOpen}
         value={filterTag}

@@ -1,5 +1,5 @@
 // app/_layout.js
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
 // import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -126,12 +126,12 @@ function HeaderButton() {
 
 // styling or css stuff
 const styles = StyleSheet.create({
-logoText: {
-fontSize: 20,
-fontWeight: '800',
-color: '#333',
-marginLeft: 5,
-letterSpacing: 1,
-},
+  logoText: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#333",
+    marginLeft: 5,
+    letterSpacing: 1,
+  },
 });
 // styling or css stuff
