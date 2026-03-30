@@ -6,11 +6,14 @@ import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 import { InventoryProvider } from '../context/InventoryContext';
 import { ListProvider } from "../context/ListsContext";
+import { TagProvider } from '../context/TagsContext';
 
 export default function Layout() {
 return (
   <ListProvider>
     <InventoryProvider>
+      <TagProvider>
+        
       <Stack>
         <Stack.Screen
           name="index"
@@ -105,6 +108,7 @@ return (
     {/* <Tabs.Screen name="settings" options={{ href: null }} />
     <Tabs.Screen name="weekly" options={{ href: null }} />
     </Tabs> */}
+      </TagProvider>
     </InventoryProvider>
   </ListProvider>
 );
