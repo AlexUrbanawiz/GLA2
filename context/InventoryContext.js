@@ -163,7 +163,7 @@ export function InventoryProvider({ children }) {
     );
   };
 
-  // Fix 2 (B): consume only what inventory covered for the recipe.
+  // consume only what inventory covered for the recipe.
   // - Only consumes when BOTH recipe + inventory quantities are numeric and units match.
   // - Distributes consumption across locations/entries in order.
   // - Removes ingredient entries that hit ~0.
@@ -186,7 +186,7 @@ export function InventoryProvider({ children }) {
         }
       }
 
-      // We will apply consumption iteratively per ingredient,
+      // apply consumption iteratively per ingredient,
       // carrying forward updated inventory each time.
       let nextInv = prevInv.map((loc) => ({
         ...loc,

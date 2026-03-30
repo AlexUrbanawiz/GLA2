@@ -411,7 +411,7 @@ export default function Recipes() {
         addItem,
       );
 
-      // Fix 2 (B): consume only what inventory covered (not the missing part).
+      // consume only what inventory covered.
       consumeCoveredForRecipe(recipe);
 
       const parts = [];
