@@ -344,7 +344,7 @@ export default function Recipes() {
   const [ingredientsList, setIngredientsList] = useState([]);
   const [editingRecipeId, setEditingRecipeId] = useState(null);
 
-  const { inventory } = useInventory();
+  const { inventory, consumeCoveredForRecipe } = useInventory();
   const { lists, addItem } = useList();
 
   const addIngredientToList = (newIng) => {
@@ -410,6 +410,9 @@ export default function Recipes() {
         listName,
         addItem,
       );
+
+      // consume only what inventory covered.
+      consumeCoveredForRecipe(recipe);
 
       const parts = [];
       if (added.length) {
@@ -494,7 +497,7 @@ export default function Recipes() {
           {ingredientsList.map((ing, index) => (
             <View key={index} style={styles.listItemRow}>
               <Text>
-                {ing.get_name()} ({ing.get_quantity()})
+                {ing.name} ({ing.quantity})
               </Text>
               <Pressable onPress={() => deleteIngredient(index)}>
                 <Text style={{ color: "red" }}>Remove</Text>
