@@ -19,7 +19,6 @@ import { useTags } from "../context/TagsContext";
 // Array that stores all unique tags
 const globalTags = [];
 
-
 // ===================== [END SAM TAG SYSTEM] =====================
 
 class ListItem {
@@ -40,7 +39,7 @@ export default function GroceryList() {
   const { tags, addTag } = useTags(); // Kryton Add
 
   //#endregion
- // ============ Kryton Change ==================
+  // ============ Kryton Change ==================
   function getOrCreateTag(name) {
     if (!name) return null;
 
@@ -52,7 +51,7 @@ export default function GroceryList() {
 
     return newTag;
   }
-// =============== End Kryton Change ==============
+  // =============== End Kryton Change ==============
   // ==== [START SAM TAG FILTER] ====
   // Current tag filter
   const [filterTag, setFilterTag] = useState(null);
@@ -96,7 +95,7 @@ export default function GroceryList() {
       // Add the item to the correct tag group
       grouped[tagName].push(item);
     });
-// ============== Kryton Change ==============
+    // ============== Kryton Change ==============
     Object.keys(grouped).forEach((tag) => {
       taggedSections.push({
         title: list.name,
@@ -174,14 +173,14 @@ export default function GroceryList() {
 
     const handleAdd = () => {
       if (!name || !qty || !price || !selectedList) return;
-// ============= Kryton Change ===========
+      // ============= Kryton Change ===========
       const tag = getOrCreateTag(tagName);
 
       const newItem = new ListItem(
         new Ingredient(name, qty, parseFloat(price)),
-        tag // ✅ object
+        tag, // ✅ object
       );
-// ============== End KC =============
+      // ============== End KC =============
 
       addItem(selectedList, newItem);
 
@@ -219,7 +218,8 @@ export default function GroceryList() {
         <DropDownPicker
           open={tagOpen}
           value={tagName}
-          items={(tags || []).map((tag) => ({ // Kryton Change
+          items={(tags || []).map((tag) => ({
+            // Kryton Change
             label: tag.name,
             value: tag.name,
           }))}
@@ -253,7 +253,7 @@ export default function GroceryList() {
     <View style={styles.container}>
       {/* ===================== [START SAM TAG FILTER VIEW] ===================== */}
       {/* Displays a preview of items that match the selected filter tag */}
-      {filterTag && (
+      {/* {filterTag && (
         <View style={{ backgroundColor: "#fff", padding: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Filtered by: {filterTag}</Text>
 
@@ -274,7 +274,7 @@ export default function GroceryList() {
               )),
           )}
         </View>
-      )}
+      )} */}
       {/* ===================== [END SAM TAG FILTER VIEW] ===================== */}
       {/* ===================== [START SAM TAG FILTER UI] ===================== */}
       {/* Dropdown that allows the user to select a tag to filter by */}
@@ -283,7 +283,8 @@ export default function GroceryList() {
         value={filterTag}
         items={[
           { label: "All Tags", value: null },
-          ...(tags || []).map((tag) => ({ // Kryton Change
+          ...(tags || []).map((tag) => ({
+            // Kryton Change
             label: tag.name,
             value: tag.name,
           })),
@@ -297,8 +298,8 @@ export default function GroceryList() {
       <SectionList
         style={{ flex: 1 }}
         // asked to change
-        sections={sections}
-        // sections={filteredSections} 
+        // sections={sections}
+        sections={filteredSections}
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
