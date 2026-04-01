@@ -200,7 +200,7 @@ export default function GroceryList() {
           items={locationItems}
           setOpen={setOpen}
           setValue={(callback) => setSelectedList(callback())} // Kryton Change
-          zIndex={1}
+          zIndex={2}
         />
         <TextInput
           style={styles.input}
@@ -224,7 +224,7 @@ export default function GroceryList() {
             label: tag.name,
             value: tag.name,
           }))}
-          zIndex={0}
+          zIndex={1}
           setOpen={setTagOpen}
           setValue={(callback) => setTag(callback())} // Kryton Change
           placeholder="Select a tag"
