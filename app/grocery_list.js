@@ -14,11 +14,11 @@ import Ingredient from "../classes/ingredient";
 import ToTag from "../classes/totag";
 import { useList } from "../context/ListsContext";
 import { useTags } from "../context/TagsContext";
+import { Add, Multiplier } from "./components/MyText";
 
 // ===================== [START SAM TAG SYSTEM] =====================
 // Array that stores all unique tags
 const globalTags = [];
-
 
 // ===================== [END SAM TAG SYSTEM] =====================
 
@@ -39,8 +39,27 @@ export default function GroceryList() {
     useList();
   const { tags, addTag } = useTags(); // Kryton Add
 
+  //d calc
+  const totalEstimatedPrice = () => {
+    let grandTotal = 0;
+
+    lists.forEach((list) => {
+      if (list.items) {
+        list.items.forEach((item) => {
+          const itemPrice = parseFloat(item.ingredient.price) || 0;
+          const itemQty = parseFloat(item.ingredient.quantity) || 1;
+          const itemTotal = Multiplier(itemQty, itemPrice);
+          grandTotal = Add(grandTotal, itemTotal);
+        });
+      }
+    });
+
+    return grandTotal.toFixed(2);
+  };
+  // d calc end
+
   //#endregion
- // ============ Kryton Change ==================
+  // ============ Kryton Change ==================
   function getOrCreateTag(name) {
     if (!name) return null;
 
@@ -52,7 +71,7 @@ export default function GroceryList() {
 
     return newTag;
   }
-// =============== End Kryton Change ==============
+  // =============== End Kryton Change ==============
   // ==== [START SAM TAG FILTER] ====
   // Current tag filter
   const [filterTag, setFilterTag] = useState(null);
@@ -96,7 +115,7 @@ export default function GroceryList() {
       // Add the item to the correct tag group
       grouped[tagName].push(item);
     });
-// ============== Kryton Change ==============
+    // ============== Kryton Change ==============
     Object.keys(grouped).forEach((tag) => {
       taggedSections.push({
         title: list.name,
@@ -167,6 +186,9 @@ export default function GroceryList() {
     const [tagOpen, setTagOpen] = useState(false);
     // ==== [END FOR SAM TAG DROPDOWN] ====
     const [selectedList, setSelectedList] = useState(null);
+    // Delano Calc start
+    // const [price, setPrice] = useSate("");
+    // D end
     const locationItems = lists.map((list) => ({
       label: list.name,
       value: list.name,
@@ -174,14 +196,14 @@ export default function GroceryList() {
 
     const handleAdd = () => {
       if (!name || !qty || !price || !selectedList) return;
-// ============= Kryton Change ===========
+      // ============= Kryton Change ===========
       const tag = getOrCreateTag(tagName);
 
       const newItem = new ListItem(
-        new Ingredient(name, qty, parseFloat(price)),
-        tag // ✅ object
+        new Ingredient(name, qty, price || "0"), //D chnage how the price is done
+        tag, // ✅ object
       );
-// ============== End KC =============
+      // ============== End KC =============
 
       addItem(selectedList, newItem);
 
@@ -201,6 +223,7 @@ export default function GroceryList() {
           items={locationItems}
           setOpen={setOpen}
           setValue={(callback) => setSelectedList(callback())} // Kryton Change
+          zIndex={2}
         />
         <TextInput
           style={styles.input}
@@ -210,7 +233,7 @@ export default function GroceryList() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Quantity (e.g. 1 gallon)"
+          placeholder="Quantity (e.g. 1 )" //small quantity change
           value={qty}
           onChangeText={setQty}
         />
@@ -219,10 +242,12 @@ export default function GroceryList() {
         <DropDownPicker
           open={tagOpen}
           value={tagName}
-          items={(tags || []).map((tag) => ({ // Kryton Change
+          items={(tags || []).map((tag) => ({
+            // Kryton Change
             label: tag.name,
             value: tag.name,
           }))}
+          zIndex={1}
           setOpen={setTagOpen}
           setValue={(callback) => setTag(callback())} // Kryton Change
           placeholder="Select a tag"
@@ -234,6 +259,7 @@ export default function GroceryList() {
           value={tagName}
           onChangeText={setTag}
         />
+        {/* d calc start */}
         <TextInput
           style={styles.input}
           placeholder="Estimated Price (e.g. 4.99)"
@@ -241,6 +267,7 @@ export default function GroceryList() {
           onChangeText={setPrice}
           keyboardType="numeric"
         />
+        {/* d calc end */}
         <Pressable style={styles.addButton} onPress={handleAdd}>
           <Text style={{ color: "white" }}>Add</Text>
         </Pressable>
@@ -253,7 +280,7 @@ export default function GroceryList() {
     <View style={styles.container}>
       {/* ===================== [START SAM TAG FILTER VIEW] ===================== */}
       {/* Displays a preview of items that match the selected filter tag */}
-      {filterTag && (
+      {/* {filterTag && (
         <View style={{ backgroundColor: "#fff", padding: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Filtered by: {filterTag}</Text>
 
@@ -274,7 +301,7 @@ export default function GroceryList() {
               )),
           )}
         </View>
-      )}
+      )} */}
       {/* ===================== [END SAM TAG FILTER VIEW] ===================== */}
       {/* ===================== [START SAM TAG FILTER UI] ===================== */}
       {/* Dropdown that allows the user to select a tag to filter by */}
@@ -283,7 +310,8 @@ export default function GroceryList() {
         value={filterTag}
         items={[
           { label: "All Tags", value: null },
-          ...(tags || []).map((tag) => ({ // Kryton Change
+          ...(tags || []).map((tag) => ({
+            // Kryton Change
             label: tag.name,
             value: tag.name,
           })),
@@ -298,7 +326,7 @@ export default function GroceryList() {
         style={{ flex: 1 }}
         // asked to change
         // sections={sections}
-        sections={filteredSections} 
+        sections={filteredSections}
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
@@ -333,7 +361,13 @@ export default function GroceryList() {
           </View>
         )}
       />
-
+      {/* start d calc */}
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>
+          Total Estimate: ${totalEstimatedPrice()}
+        </Text>
+      </View>
+      {/* end d calc */}
       <View>
         {isAddingList && <AddList onClose={() => setIsAddingList(false)} />}
         {isAddingItem && <AddItem onClose={() => setIsAddingItem(false)} />}
@@ -403,4 +437,19 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
     width: "100%",
   },
+  // d calc start
+  totalContainer: {
+    paddingVertical: 15,
+    borderTopWidth: 2,
+    borderColor: "#ddd",
+    marginTop: 10,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "green",
+  },
+  // d calc end
 });

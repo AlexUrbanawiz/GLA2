@@ -1,8 +1,30 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
 
-const ListContext = createContext()
-const STORAGE_KEY = 'GROCERYLIST'
+const ListContext = createContext();
+const STORAGE_KEY = "GROCERYLIST";
+
+function normalizeLoadedLists(parsed) {
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .map((entry) => {
+      // Old format: ["Walmart", "Costco"]
+      if (typeof entry === "string") {
+        return { name: entry, items: [] };
+      }
+
+      // Expected format: [{ name, items }]
+      if (entry && typeof entry === "object") {
+        const name = typeof entry.name === "string" ? entry.name : "";
+        const items = Array.isArray(entry.items) ? entry.items : [];
+        if (!name) return null;
+        return { ...entry, name, items };
+      }
+
+      return null;
+    })
+    .filter(Boolean);
+}
 
 export function ListProvider({ children }) {
   const [lists, setLists] = useState([]);
@@ -13,7 +35,11 @@ export function ListProvider({ children }) {
     const load = async () => {
       try {
         const saved = await AsyncStorage.getItem(STORAGE_KEY);
-        if (saved) setLists(JSON.parse(saved));
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const normalized = normalizeLoadedLists(parsed);
+          setLists(normalized);
+        }
       } catch (e) {
         console.log("Failed to load lists", e);
       } finally {
@@ -26,14 +52,25 @@ export function ListProvider({ children }) {
 
   useEffect(() => {
     if (!loaded) return;
-
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(lists));
   }, [lists, loaded]);
 
-  const addList = (list_name) => {
-    setLists((prev) => [...prev, list_name]);
+  const addList = (listObj) => {
+    // Expecting { name, items: [] }
+    if (!listObj || typeof listObj !== "object") return;
+    if (!listObj.name) return;
+
+    const safe = {
+      ...listObj,
+      items: Array.isArray(listObj.items) ? listObj.items : [],
+    };
+
+    setLists((prev) => [...prev, safe]);
   };
+
   const addItem = (list_name, newItem) => {
+    if (!list_name) return;
+
     setLists((prev) =>
       prev.map((list) =>
         list.name === list_name
@@ -42,10 +79,9 @@ export function ListProvider({ children }) {
       )
     );
   };
+
   const removeList = (list_name) => {
-    setLists((prev) =>
-      prev.filter((l) => l.name !== list_name)
-    );
+    setLists((prev) => prev.filter((l) => l?.name !== list_name));
   };
   const removeItem = (list_name, item) => {
     console.log("Clicked item:", item);
