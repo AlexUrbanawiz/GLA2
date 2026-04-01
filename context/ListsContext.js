@@ -37,41 +37,41 @@ export function ListProvider({ children }) {
     setLists((prev) =>
       prev.map((list) =>
         list.name === list_name
-    ? { ...list, items: [...list.items, newItem] }
-    : list
-  )
-);
-};
-const removeList = (list_name) => {
-  setLists((prev) =>
-    prev.filter((l) => l.name !== list_name)
-);
-};
-const removeItem = (list_name, item) => {
-  console.log("Clicked item:", item);
-  
-  setLists((prev) =>
-    prev.map((list) => {
-      if (list.name === list_name) {
-        console.log("Items in this list:", list.items);
-      }
-      
-      return list.name === list_name
-      ? {
-        ...list,
-        items: list.items.filter((ing) => {
-          console.log("Comparing:", ing, "to", item);
-          return ing.ingredient.name !== item.ingredient.name;
-        }),
-      }
-      : list;
-    })
-  );
-};
+        ? { ...list, items: [...list.items, newItem] }
+        : list
+      )
+    );
+  };
+  const removeList = (list_name) => {
+    setLists((prev) =>
+      prev.filter((l) => l.name !== list_name)
+    );
+  };
+  const removeItem = (list_name, item) => {
+    console.log("Clicked item:", item);
+    
+    setLists((prev) =>
+      prev.map((list) => {
+        if (list.name === list_name) {
+          console.log("Items in this list:", list.items);
+        }
+        
+        return list.name === list_name
+        ? {
+          ...list,
+          items: list.items.filter((ing) => {
+            console.log("Comparing:", ing, "to", item);
+            return ing.ingredient.name !== item.ingredient.name;
+          }),
+        }
+        : list;
+      })
+    );
+  };
 
-const toggleItem = (listName, index) => {
-  setLists((prev) =>
-    prev.map((list) =>
+  const toggleItem = (listName, index) => {
+    setLists((prev) =>
+      prev.map((list) =>
         list.name === listName
           ? {
               ...list,
@@ -81,7 +81,7 @@ const toggleItem = (listName, index) => {
                   : item
               ),
             }
-          : list
+        : list
       )
     );
   };
