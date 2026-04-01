@@ -80,31 +80,31 @@ export default function GroceryList() {
   // Items are grouped by their tags
   const taggedSections = [];
 
-  lists.forEach((list) => {
-    const grouped = {};
+  // lists.forEach((list) => {
+  //   const grouped = {};
 
-    (list.items || []).forEach((item) => {
-      // Get the tag name, default to "Other" if none exists
-      const tagName = item.tags?.name || "Other";
+  //   (list.items || []).forEach((item) => {
+  //     // Get the tag name, default to "Other" if none exists
+  //     const tagName = item.tags?.name || "Other";
 
-      // Initialize the group if it doesn't exist yet
-      if (!grouped[tagName]) {
-        grouped[tagName] = [];
-      }
+  //     // Initialize the group if it doesn't exist yet
+  //     if (!grouped[tagName]) {
+  //       grouped[tagName] = [];
+  //     }
 
-      // Add the item to the correct tag group
-      grouped[tagName].push(item);
-    });
-    // ============== Kryton Change ==============
-    Object.keys(grouped).forEach((tag) => {
-      taggedSections.push({
-        title: list.name,
-        tag: tag,
-        data: grouped[tag],
-      });
-    });
-    // ============== End KC  ================
-  });
+  //     // Add the item to the correct tag group
+  //     grouped[tagName].push(item);
+  //   });
+  //   // ============== Kryton Change ==============
+  //   Object.keys(grouped).forEach((tag) => {
+  //     taggedSections.push({
+  //       title: list.name,
+  //       tag: tag,
+  //       data: grouped[tag],
+  //     });
+  //   });
+  //   // ============== End KC  ================
+  // });
   // ===================== [END SAM TAG GROUPING] =====================
 
   // ===================== [START SAM TAG FILTER] =====================
