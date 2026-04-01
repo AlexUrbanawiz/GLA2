@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { InventoryProvider } from '../context/InventoryContext';
 import { ListProvider } from "../context/ListsContext";
 import { RecipesProvider } from "../context/RecipeContext";
+import { TagProvider } from "../context/TagsContext";
 
 export default function Layout() {
   return (

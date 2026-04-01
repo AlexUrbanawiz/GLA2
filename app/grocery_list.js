@@ -223,6 +223,7 @@ export default function GroceryList() {
           items={locationItems}
           setOpen={setOpen}
           setValue={(callback) => setSelectedList(callback())} // Kryton Change
+          zIndex={2}
         />
         <TextInput
           style={styles.input}
@@ -246,6 +247,7 @@ export default function GroceryList() {
             label: tag.name,
             value: tag.name,
           }))}
+          zIndex={1}
           setOpen={setTagOpen}
           setValue={(callback) => setTag(callback())} // Kryton Change
           placeholder="Select a tag"
@@ -278,7 +280,7 @@ export default function GroceryList() {
     <View style={styles.container}>
       {/* ===================== [START SAM TAG FILTER VIEW] ===================== */}
       {/* Displays a preview of items that match the selected filter tag */}
-      {filterTag && (
+      {/* {filterTag && (
         <View style={{ backgroundColor: "#fff", padding: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Filtered by: {filterTag}</Text>
 
@@ -299,7 +301,7 @@ export default function GroceryList() {
               )),
           )}
         </View>
-      )}
+      )} */}
       {/* ===================== [END SAM TAG FILTER VIEW] ===================== */}
       {/* ===================== [START SAM TAG FILTER UI] ===================== */}
       {/* Dropdown that allows the user to select a tag to filter by */}
@@ -323,8 +325,8 @@ export default function GroceryList() {
       <SectionList
         style={{ flex: 1 }}
         // asked to change
-        sections={sections}
-        // sections={filteredSections}
+        // sections={sections}
+        sections={filteredSections}
         keyExtractor={(item, index) => item.ingredient.name + index}
         renderSectionHeader={({ section }) => (
           <View style={{ flexDirection: "row" }}>
