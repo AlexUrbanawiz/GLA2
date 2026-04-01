@@ -91,6 +91,7 @@ export default function Weekly() {
           setOpen={setOpen}
           setValue={(callback) => setSelectedList(callback(selectedList))}
           style={{ marginBottom: 10 }}
+          zIndex={2}
         />
 
         <TextInput
@@ -118,6 +119,7 @@ export default function Weekly() {
           setOpen={setTagOpen}
           setValue={(callback) => setTag(callback())} // Kryton Change
           placeholder="Select a tag"
+          zIndex={1}
         />
         <TextInput
           style={styles.input}
