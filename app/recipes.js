@@ -1,12 +1,15 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from "react";
 import {
   Alert,
+  FlatList, // styling
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 import Ingredient from "../classes/ingredient";
 import { useInventory } from "../context/InventoryContext";
@@ -198,7 +201,7 @@ function addRecipeToGroceryWithQuantities(
       if (hasName) {
         fullyCovered.push(
           ing.name +
-            " (recipe quantity not numeric — skipped; check pantry vs recipe)",
+          " (recipe quantity not numeric — skipped; check pantry vs recipe)",
         );
       } else {
         addItem(
@@ -214,9 +217,9 @@ function addRecipeToGroceryWithQuantities(
         );
         added.push(
           ing.name +
-            " (" +
-            ing.quantity +
-            ") [full amount; not comparable to inventory]",
+          " (" +
+          ing.quantity +
+          ") [full amount; not comparable to inventory]",
         );
       }
       continue;
@@ -244,9 +247,9 @@ function addRecipeToGroceryWithQuantities(
       );
       added.push(
         ing.name +
-          " (" +
-          ing.quantity +
-          ") [inventory uses another unit — full recipe amount; adjust manually]",
+        " (" +
+        ing.quantity +
+        ") [inventory uses another unit — full recipe amount; adjust manually]",
       );
       continue;
     }
@@ -257,13 +260,13 @@ function addRecipeToGroceryWithQuantities(
       const u = parsed.unitNorm || "unit";
       fullyCovered.push(
         ing.name +
-          " (need " +
-          formatAmountForDisplay(need) +
-          " " +
-          u +
-          ", have " +
-          formatAmountForDisplay(have) +
-          ")",
+        " (need " +
+        formatAmountForDisplay(need) +
+        " " +
+        u +
+        ", have " +
+        formatAmountForDisplay(have) +
+        ")",
       );
       continue;
     }
@@ -280,13 +283,13 @@ function addRecipeToGroceryWithQuantities(
     );
     added.push(
       ing.name +
-        ": +" +
-        qtyLabel +
-        " (recipe " +
-        formatAmountForDisplay(need) +
-        ", inventory " +
-        formatAmountForDisplay(have) +
-        ")",
+      ": +" +
+      qtyLabel +
+      " (recipe " +
+      formatAmountForDisplay(need) +
+      ", inventory " +
+      formatAmountForDisplay(have) +
+      ")",
     );
   }
 
@@ -347,6 +350,12 @@ export default function Recipes() {
   const { inventory, consumeCoveredForRecipe } = useInventory();
   const { lists, addItem } = useList();
 
+  // styling - Adding these for the styled input form
+  const [ingName, setIngName] = useState("");
+  const [ingQty, setIngQty] = useState("");
+  const [ingPrice, setIngPrice] = useState("");
+  // styling
+
   const addIngredientToList = (newIng) => {
     setIngredientsList([...ingredientsList, newIng]);
     setShowIngForm(false);
@@ -372,6 +381,16 @@ export default function Recipes() {
     );
     setRecipes(filteredRecipes);
   };
+
+  // styling
+  const handleAddIngredient = () => {
+    if (ingName && ingQty) {
+      const newIng = new Ingredient(ingName, ingQty, ingPrice || "0");
+      setIngredientsList([...ingredientsList, newIng]);
+      setIngName(""); setIngQty(""); setIngPrice("");
+    }
+  };
+  // styling
 
   const handleSaveRecipe = () => {
     if (recipeName !== "" && ingredientsList.length > 0) {
@@ -411,7 +430,7 @@ export default function Recipes() {
         addItem,
       );
 
-      // consume only what inventory covered.
+      // Fix 2 (B): consume only what inventory covered (not the missing part).
       consumeCoveredForRecipe(recipe);
 
       const parts = [];
@@ -448,161 +467,251 @@ export default function Recipes() {
     );
   };
 
+  // styling
+  const renderRecipeCard = ({ item }) => (
+    <View style={styles.recipeCard}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.recipeTitle}>{item.name}</Text>
+        <Pressable onPress={() => deleteRecipe(item.id)}>
+          <Ionicons name="trash-outline" size={20} color="#FF6B6B" />
+        </Pressable>
+      </View>
+
+      <ScrollView style={styles.ingredientList}>
+        {item.ingredients.map((ing, index) => (
+          <Text key={index} style={styles.ingredientText}>
+            • {ing.quantity} {ing.name}
+          </Text>
+        ))}
+      </ScrollView>
+
+      <Pressable
+        style={styles.cardButton}
+        onPress={() => addRecipeToGroceryList(item)}
+      >
+        <Ionicons name="cart-outline" size={18} color="white" />
+        <Text style={styles.cardButtonText}>Add Ingredients to List</Text>
+      </Pressable>
+    </View>
+  );
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {!isAdding && (
-        <View style={{ width: "100%" }}>
-          <Text style={styles.title}>My Recipe Book</Text>
-          {recipes.map((recipe, index) => (
-            <View
-              key={recipe.id != null ? recipe.id : index}
-              style={styles.recipeCard}
-            >
-              <Pressable onPress={() => startEditing(recipe)}>
-                <Text style={styles.recipeTitle}>{recipe.name}</Text>
-                <Text>{recipe.ingredients.length} Ingredients</Text>
-              </Pressable>
-              <Pressable
-                style={styles.groceryButton}
-                onPress={() => addRecipeToGroceryList(recipe)}
-              >
-                <Text style={styles.groceryButtonText}>
-                  Add missing to grocery list
-                </Text>
-              </Pressable>
-              <Pressable onPress={() => deleteRecipe(recipe.id)}>
-                <Text style={{ color: "red" }}>Remove recipe</Text>
-              </Pressable>
-            </View>
-          ))}
-          <Pressable
-            style={styles.mainButton}
-            onPress={() => setIsAdding(true)}
-          >
-            <Text style={{ color: "white" }}>+ Create New Recipe</Text>
-          </Pressable>
-        </View>
-      )}
+    <View style={styles.mainContainer}>
+      <FlatList
+        data={recipes}
+        renderItem={renderRecipeCard}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.listPadding}
+        snapToAlignment="center"
+        snapToInterval={320}
+        decelerationRate="fast"
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons name="restaurant-outline" size={64} color="#CCC" />
+            <Text style={styles.emptyText}>No recipes yet.</Text>
+            <Text style={styles.emptySubtext}>Your recipe pile is empty!</Text>
+          </View>
+        }
+      />
 
-      {isAdding && (
-        <View style={{ width: "100%" }}>
-          <TextInput
-            style={styles.input}
-            placeholder="Recipe Name (e.g. Pasta)"
-            value={recipeName}
-            onChangeText={setRecipeName}
-          />
+      <Pressable style={styles.fab} onPress={() => setIsAdding(true)}>
+        <Ionicons name="add" size={32} color="white" />
+      </Pressable>
 
-          <Text style={styles.subtitle}>Ingredients</Text>
-          {ingredientsList.map((ing, index) => (
-            <View key={index} style={styles.listItemRow}>
-              <Text>
-                {ing.name} ({ing.quantity})
-              </Text>
-              <Pressable onPress={() => deleteIngredient(index)}>
-                <Text style={{ color: "red" }}>Remove</Text>
+      <Modal visible={isAdding} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Create Recipe</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Recipe Name"
+              value={recipeName}
+              onChangeText={setRecipeName}
+            />
+
+            <View style={styles.ingForm}>
+              <Text style={styles.sectionLabel}>Add Ingredient</Text>
+              <TextInput style={styles.input} placeholder="Name" value={ingName} onChangeText={setIngName} />
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TextInput style={[styles.input, { width: '48%' }]} placeholder="Qty" value={ingQty} onChangeText={setIngQty} />
+                <TextInput style={[styles.input, { width: '48%' }]} placeholder="Price" value={ingPrice} onChangeText={setIngPrice} keyboardType="numeric" />
+              </View>
+              <Pressable style={styles.smallAddButton} onPress={handleAddIngredient}>
+                <Text style={styles.smallAddButtonText}>+ Confirm Ingredient</Text>
               </Pressable>
             </View>
-          ))}
 
-          {showIngForm ? (
-            <MakeRecipe onAddIngredient={addIngredientToList} />
-          ) : (
-            <Pressable
-              style={styles.toggleButton}
-              onPress={() => setShowIngForm(true)}
-            >
-              <Text>+ Add Ingredient</Text>
-            </Pressable>
-          )}
+            <ScrollView style={styles.tempList}>
+              {ingredientsList.map((ing, i) => (
+                <Text key={i} style={styles.tempIngText}>• {ing.qty} {ing.name}</Text>
+              ))}
+            </ScrollView>
 
-          <View style={{ marginTop: 20 }}>
-            <Pressable
-              style={[styles.mainButton, { backgroundColor: "blue" }]}
-              onPress={handleSaveRecipe}
-            >
-              <Text style={{ color: "white" }}>Save Entire Recipe</Text>
-            </Pressable>
-            <Pressable
-              style={styles.toggleButton}
-              onPress={() => {
-                setIsAdding(false);
-                setEditingRecipeId(null);
-              }}
-            >
-              <Text style={{ color: "red" }}>Cancel</Text>
-            </Pressable>
+            <View style={styles.modalActions}>
+              <Pressable style={styles.saveButton} onPress={handleSaveRecipe}>
+                <Text style={styles.buttonText}>Save Recipe</Text>
+              </Pressable>
+              <Pressable style={styles.cancelButton} onPress={() => setIsAdding(false)}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
-      )}
-    </ScrollView>
+      </Modal>
+    </View>
   );
 }
-
 const styles = StyleSheet.create({
-  container: { padding: 40, alignItems: "center" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
-  subtitle: { fontSize: 18, fontWeight: "600", marginVertical: 10 },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
-    width: "100%",
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#FAFAFA',
   },
-  inputContainer: {
-    backgroundColor: "#f0f0f0",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  addButton: {
-    backgroundColor: "green",
-    padding: 10,
-    alignItems: "center",
-    borderRadius: 5,
-  },
-  mainButton: {
-    backgroundColor: "black",
-    padding: 15,
-    alignItems: "center",
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  toggleButton: { padding: 10, alignItems: "center" },
-  listItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    flexDirection: "row",
-    justifyContent: "space-between",
+  listPadding: {
+    paddingHorizontal: 20,
+    alignItems: 'center',
   },
   recipeCard: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
+    backgroundColor: '#FFF',
+    width: 300,
+    height: 450,
+    borderRadius: 25,
+    marginRight: 20,
+    padding: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  groceryButton: {
-    marginTop: 10,
-    backgroundColor: "#2e7d32",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  groceryButtonText: { color: "white", fontWeight: "600" },
-  listItemRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    width: "100%",
+    borderBottomColor: '#F0F0F0',
+    paddingBottom: 15,
   },
-  recipeTitle: { fontWeight: "bold", fontSize: 16 },
+  recipeTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333',
+  },
+  ingredientList: {
+    flex: 1,
+    marginTop: 15,
+  },
+  ingredientText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 8,
+  },
+  cardButton: {
+    backgroundColor: '#87DB84',
+    flexDirection: 'row',
+    padding: 15,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  cardButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    backgroundColor: '#87DB84',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 300,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#999',
+    marginTop: 10,
+  },
+  emptySubtext: {
+    color: '#BBB',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 25,
+    height: '85%',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  sectionLabel: {
+    fontWeight: '600',
+    marginBottom: 10,
+    color: '#444',
+  },
+  input: {
+    backgroundColor: '#F5F5F5',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  smallAddButton: {
+    backgroundColor: '#E8F5E9',
+    padding: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  smallAddButtonText: {
+    color: '#87DB84',
+    fontWeight: '700',
+  },
+  tempList: {
+    maxHeight: 150,
+    marginBottom: 15,
+  },
+  tempIngText: {
+    color: '#666',
+    paddingVertical: 2,
+  },
+  saveButton: {
+    backgroundColor: '#87DB84',
+    padding: 18,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelButton: {
+    padding: 15,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#999',
+    fontWeight: '600',
+  },
 });
+// styling
