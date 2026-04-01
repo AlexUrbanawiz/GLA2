@@ -29,6 +29,7 @@ function normalizeLoadedLists(parsed) {
 export function ListProvider({ children }) {
   const [lists, setLists] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -71,56 +72,58 @@ export function ListProvider({ children }) {
     if (!list_name) return;
 
     setLists((prev) =>
-      prev.map((list) => {
-        if (!list || typeof list !== "object") return list;
-
-        if (list.name !== list_name) return list;
-
-        const existingItems = Array.isArray(list.items) ? list.items : [];
-        return { ...list, items: [...existingItems, newItem] };
-      }),
+      prev.map((list) =>
+        list.name === list_name
+        ? { ...list, items: [...list.items, newItem] }
+        : list
+      )
     );
   };
 
   const removeList = (list_name) => {
     setLists((prev) => prev.filter((l) => l?.name !== list_name));
   };
-
   const removeItem = (list_name, item) => {
+    console.log("Clicked item:", item);
+    
     setLists((prev) =>
       prev.map((list) => {
-        if (list?.name !== list_name) return list;
-        const existingItems = Array.isArray(list.items) ? list.items : [];
-        return {
+        if (list.name === list_name) {
+          console.log("Items in this list:", list.items);
+        }
+        
+        return list.name === list_name
+        ? {
           ...list,
-          items: existingItems.filter(
-            (x) => x?.ingredient?.name !== item?.ingredient?.name,
-          ),
-        };
-      }),
+          items: list.items.filter((ing) => {
+            console.log("Comparing:", ing, "to", item);
+            return ing.ingredient.name !== item.ingredient.name;
+          }),
+        }
+        : list;
+      })
     );
   };
 
   const toggleItem = (listName, index) => {
     setLists((prev) =>
-      prev.map((list) => {
-        if (list?.name !== listName) return list;
-
-        const existingItems = Array.isArray(list.items) ? list.items : [];
-        return {
-          ...list,
-          items: existingItems.map((item, i) =>
-            i === index ? { ...item, isChecked: !item.isChecked } : item,
-          ),
-        };
-      }),
+      prev.map((list) =>
+        list.name === listName
+          ? {
+              ...list,
+              items: list.items.map((item, i) =>
+                i === index
+                  ? { ...item, isChecked: !item.isChecked }
+                  : item
+              ),
+            }
+        : list
+      )
     );
   };
 
   return (
-    <ListContext.Provider
-      value={{ lists, addList, addItem, removeItem, removeList, toggleItem }}
-    >
+    <ListContext.Provider value={{ lists, addList, addItem, removeItem, removeList, toggleItem}}>
       {children}
     </ListContext.Provider>
   );

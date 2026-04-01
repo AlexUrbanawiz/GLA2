@@ -1,8 +1,13 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import Ingredient from "../classes/ingredient";
+import ToTag from "../classes/totag";
 import { useList } from "../context/ListsContext";
+import { useSubscriptions } from "../context/SubscriptionContext";
+import { useTags } from "../context/TagsContext";
+
 
 class ListItem {
   constructor(ingredient, tags) {
@@ -14,13 +19,18 @@ class ListItem {
 
 export default function Weekly() {
   const { lists, addItem, addList } = useList();
-
-  const [weeklyItems, setWeeklyItems] = useState([]);
+  // Kryton start =============================================
+  const { weeklyItems, addSubItem, removeSubItem } = useSubscriptions();
+  const { tags, addTag } = useTags();
+  // const [weeklyItems, setWeeklyItems] = useState([]);
+  // Kryton end ===============================================
   const [name, setName] = useState("");
   const [qty, setQty] = useState("");
-  const [tag, setTag] = useState("");
+  const [tagName, setTag] = useState("");
 
   const [open, setOpen] = useState(false);
+  const [tagOpen, setTagOpen] = useState(false);
+
   const [selectedList, setSelectedList] = useState(null);
 
   const locationItems = lists.map((list) => ({
@@ -28,12 +38,29 @@ export default function Weekly() {
     value: list.name,
   }));
 
+  //Kryton Start =============================================
+  function getOrCreateTag(name) {
+    if (!name) return null;
+
+    const existing = (tags || []).find((t) => t.name === name);
+    if (existing) return existing;
+
+    const newTag = new ToTag(name, [], 0);
+    addTag(newTag);
+
+    return newTag;
+  }
+  //Kryton end ===============================================
+
   const addWeeklyItem = () => {
     if (!name || !qty) return;
-
+    const tag = getOrCreateTag(tagName);
     const newItem = new ListItem(new Ingredient(name, qty, "0"), tag);
 
-    setWeeklyItems((prev) => [...prev, newItem]);
+    //Kryton Start =============================================
+    addSubItem(newItem);
+    // setWeeklyItems((prev) => [...prev, newItem]);
+    //Kryton End ===============================================
 
     setName("");
     setQty("");
@@ -62,8 +89,9 @@ export default function Weekly() {
           value={selectedList}
           items={locationItems}
           setOpen={setOpen}
-          setValue={setSelectedList}
+          setValue={(callback) => setSelectedList(callback(selectedList))}
           style={{ marginBottom: 10 }}
+          zIndex={2}
         />
 
         <TextInput
@@ -79,13 +107,28 @@ export default function Weekly() {
           value={qty}
           onChangeText={setQty}
         />
-
+        {/* Kryton deleted */}
+    {/* ============================ Kryton Start ========================== */}
+        <DropDownPicker
+          open={tagOpen}
+          value={tagName}
+          items={(tags || []).map((tag) => ({ // Kryton Change
+            label: tag.name,
+            value: tag.name,
+          }))}
+          setOpen={setTagOpen}
+          setValue={(callback) => setTag(callback())} // Kryton Change
+          placeholder="Select a tag"
+          zIndex={1}
+        />
         <TextInput
           style={styles.input}
           placeholder="Tag"
-          value={tag}
+          value={tagName}
           onChangeText={setTag}
         />
+    {/* ============================ Kryton End ============================ */}
+
 
         <Pressable style={styles.addButton} onPress={addWeeklyItem}>
           <Text style={{ color: "white" }}>+ Add to Weekly List</Text>
@@ -99,7 +142,15 @@ export default function Weekly() {
             <Text>
               {item.ingredient.name} - {item.ingredient.quantity}
             </Text>
+            <Pressable onPress={() => removeSubItem(item)}>
+              <Ionicons
+                name="close-outline"
+                size={22}
+                style={{ paddingEnd: 5 }}
+              />
+            </Pressable>
           </View>
+          
         ))}
       </View>
 

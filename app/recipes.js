@@ -542,19 +542,33 @@ export default function Recipes() {
                 <Text style={styles.smallAddButtonText}>+ Confirm Ingredient</Text>
               </Pressable>
             </View>
+          ))}
+          <Pressable
+            style={styles.mainButton}
+            onPress={() => setIsAdding(true)}
+          >
+            <Text style={{ color: "white" }}>+ Create New Recipe</Text>
+          </Pressable>
+        </View>
+      )}
 
-            <ScrollView style={styles.tempList}>
-              {ingredientsList.map((ing, i) => (
-                <Text key={i} style={styles.tempIngText}>• {ing.qty} {ing.name}</Text>
-              ))}
-            </ScrollView>
+      {isAdding && (
+        <View style={{ width: "100%" }}>
+          <TextInput
+            style={styles.input}
+            placeholder="Recipe Name (e.g. Pasta)"
+            value={recipeName}
+            onChangeText={setRecipeName}
+          />
 
-            <View style={styles.modalActions}>
-              <Pressable style={styles.saveButton} onPress={handleSaveRecipe}>
-                <Text style={styles.buttonText}>Save Recipe</Text>
-              </Pressable>
-              <Pressable style={styles.cancelButton} onPress={() => setIsAdding(false)}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+          <Text style={styles.subtitle}>Ingredients</Text>
+          {ingredientsList.map((ing, index) => (
+            <View key={index} style={styles.listItemRow}>
+              <Text>
+                {ing.name} ({ing.quantity})
+              </Text>
+              <Pressable onPress={() => deleteIngredient(index)}>
+                <Text style={{ color: "red" }}>Remove</Text>
               </Pressable>
             </View>
           </View>

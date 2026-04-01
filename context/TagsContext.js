@@ -29,12 +29,17 @@ export function TagProvider({ children }) {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(tags));
   }, [tags, loaded]);
 
-const addTag = (tag_name) => {
-  setTags((prev) => [...prev, tag_name]);
-};
+  const addTag = (tag_name) => {
+    setTags((prev) => [...prev, tag_name]);
+  };
+  const removeTag = (tag_name) => {
+    setTags((prev) =>
+      prev.filter((t) => t.name !== tag_name)
+    );
+  };
 
   return (
-    <TagContext.Provider value={{tags, addTag }}>
+    <TagContext.Provider value={{tags, addTag, removeTag }}>
       {children}
     </TagContext.Provider>
   );

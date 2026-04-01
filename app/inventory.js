@@ -98,43 +98,6 @@ export default function Inventory() {
     );
   }
   
-
-  // function AddIngredient({ onAddIngredient }) {
-  //   const [name, setName] = useState("");
-  //   const [qty, setQty] = useState("");
-  
-  //   const handleAdd = () => {
-  //     if (name && qty) {
-  //       // Create the new object and send it to the parent
-  //       const newIng = new Ingredient(name, qty, "0");
-  //       onAddIngredient(newIng);
-  
-  //       // Clear the inputs
-  //       setName("");
-  //       setQty("");
-  //     }
-  //   };
-  
-  //   return (
-  //     <View style={styles.inputContainer}>
-  //       <TextInput
-  //         style={styles.input}
-  //         placeholder="Ingredient Name"
-  //         value={name}
-  //         onChangeText={setName}
-  //       />
-  //       <TextInput
-  //         style={styles.input}
-  //         placeholder="Quantity (e.g. 1 cup)"
-  //         value={qty}
-  //         onChangeText={setQty}
-  //       />
-  //       <Pressable style={styles.addButton} onPress={handleAdd}>
-  //         <Text style={{ color: "white" }}>Confirm Add</Text>
-  //       </Pressable>
-  //     </View>
-  //   );
-  // }
   const [pantryList, setPantryList] = useState([
     new Ingredient("Onion", "1/2", "3.00"),
     new Ingredient("Green Bell Pepper", "1", "1.00"),
